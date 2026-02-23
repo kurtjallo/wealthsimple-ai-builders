@@ -7,49 +7,20 @@ Built for the [Wealthsimple AI Builders](https://www.wealthsimple.com/) program.
 ## How It Works
 
 ```mermaid
-flowchart TD
-    Upload["Document Upload"] --> Orchestrator
-
-    subgraph Orchestrator["Orchestrator"]
-        direction TB
-    end
-
-    Orchestrator --> Parallel
-
-    subgraph Parallel["Parallel Agent Processing"]
-        direction LR
-        DOC["Document\nProcessor\n(Mistral OCR)"]
-        ID["Identity\nVerifier\n(Claude)"]
-        SAN["Sanctions\nScreener\n(UN + OFAC)"]
-        PEP["PEP\nScreener\n(Claude)"]
-    end
-
-    DOC --> Scorer
-    ID --> Scorer
-    SAN --> Scorer
-    PEP --> Scorer
-
-    Scorer["Risk Scorer\n(Deterministic Engine)\nScore: 0-100"] --> Narrator
-    Narrator["Case Narrator\n(Claude)\nHuman-Readable Assessment"] --> Profile
-
-    Profile["Risk Profile\n+ Linked Evidence"]
-
-    Profile --> Decision
-
-    subgraph Decision["Human Decision (Required)"]
-        direction LR
-        Approve["Approve"]
-        Deny["Deny"]
-        Escalate["Escalate"]
-    end
-
-    Decision --> Audit["Audit Trail\n(Every action logged)"]
-
-    style Parallel fill:#f0f4ff,stroke:#4a6fa5
-    style Decision fill:#fff3e0,stroke:#e65100
-    style Audit fill:#e8f5e9,stroke:#2e7d32
-    style Scorer fill:#fce4ec,stroke:#c62828
-    style Narrator fill:#f3e5f5,stroke:#6a1b9a
+graph LR
+    A[Upload Docs] --> B[Orchestrator]
+    B --> C[Doc Processor]
+    B --> D[Identity Verifier]
+    B --> E[Sanctions Screener]
+    C --> F[Risk Scorer]
+    D --> F
+    E --> F
+    F --> G[Case Narrator]
+    G --> H[Compliance Officer]
+    H --> I{Decision}
+    I --> J[Approve]
+    I --> K[Deny]
+    I --> L[Escalate]
 ```
 
 **Before**: A compliance officer manually reviews hundreds of pages of documents, cross-references sanctions lists, and writes up their assessment. Takes 4+ hours per case.
