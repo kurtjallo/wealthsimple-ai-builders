@@ -1,10 +1,25 @@
 # KYC/AML Operations Orchestrator
 
-A multi-agent AI system that reduces KYC compliance review from **5 days to 3 minutes**. Specialized agents handle document processing, identity verification, sanctions screening, risk scoring, and case narrative generation in parallel — while a compliance officer makes the final call.
+> **TL;DR** — When someone opens a new account at a financial institution, a compliance officer has to verify their identity, screen them against sanctions lists, assess risk, and write up a case report. This takes **4+ hours per case** and involves reading hundreds of pages. This project replaces that manual grind with a team of AI agents that do it all in **~3 minutes** — the officer just reviews the synthesized report and makes the call.
 
 Built for the [Wealthsimple AI Builders](https://www.wealthsimple.com/) program.
 
-## How It Works
+## The Problem
+
+Every bank and fintech must run Know Your Customer (KYC) and Anti-Money Laundering (AML) checks before onboarding a new client. Today, that looks like this:
+
+1. **Document review** — A compliance officer manually reads passports, utility bills, corporate filings, and bank statements to extract names, addresses, dates of birth, and document numbers.
+2. **Sanctions screening** — They cross-reference the applicant against UN, OFAC, and other sanctions lists, checking for name variations and aliases.
+3. **Risk assessment** — They weigh all the signals (document quality, jurisdiction risk, PEP status, sanctions hits) and assign a risk level.
+4. **Case write-up** — They write a narrative summarizing their findings, linking to evidence, and recommending approve/deny/escalate.
+
+This is slow (days per case), repetitive, and error-prone. Compliance teams are chronically understaffed. The work is mostly cognitive drudgery — exactly what AI is good at.
+
+## The Solution
+
+This system orchestrates **5 specialized AI agents** that work in parallel to handle steps 1–4 automatically. A compliance officer reviews the final output — a synthesized risk profile with linked evidence — and makes the human judgment call (approve, deny, or escalate).
+
+The AI does the reading. The human makes the decision.
 
 ```mermaid
 graph LR
@@ -22,10 +37,6 @@ graph LR
     I --> K[Deny]
     I --> L[Escalate]
 ```
-
-**Before**: A compliance officer manually reviews hundreds of pages of documents, cross-references sanctions lists, and writes up their assessment. Takes 4+ hours per case.
-
-**After**: The AI orchestrator processes everything in parallel, presents a synthesized risk profile with linked evidence, and the officer reviews and decides in minutes.
 
 ## Agents
 
