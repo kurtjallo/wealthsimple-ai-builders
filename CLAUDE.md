@@ -68,7 +68,7 @@ When entering plan mode, follow this protocol:
 
 ## Project State
 
-- **Status**: All 10 phases planned — 45 total execution plans, ready to execute Phase 1
+- **Status**: Phase 1 complete — Next.js scaffold, Supabase schema, Claude SDK init all done. Ready for Phase 2.
 - **Planning docs**:
   - `.planning/PROJECT.md` — full project context and requirements
   - `.planning/REQUIREMENTS.md` — 26 v1 requirements with traceability
@@ -77,6 +77,29 @@ When entering plan mode, follow this protocol:
   - `.planning/config.json` — YOLO mode, comprehensive depth, parallel execution
 - **Phase directories**: `.planning/phases/01-foundation` through `.planning/phases/10-demo-polish-deliverables`
 - **Research**: `/research/` (10 files), `PROJECT_OPTIONS.md`, `RESEARCH_SYNTHESIS.md`
+
+## Completed Work
+
+### Phase 1: Foundation (Plans 01-01, 01-02, 01-03)
+
+**Plan 01-01: Project Scaffold**
+- Next.js app with TypeScript, Tailwind CSS v4, ESLint
+- 13 shadcn/ui components: button, card, badge, input, textarea, separator, scroll-area, table, tabs, alert, dialog, dropdown-menu, sonner
+- Domain types: `src/types/index.ts` — Case, Document, AgentRun, AuditLog interfaces
+- App shell: KYC/AML card at `/`, health check at `/api/health`
+- `.env.example` with Supabase, Anthropic, Mistral keys
+
+**Plan 01-02: Supabase Schema & Types**
+- `supabase/migrations/00001_initial_schema.sql` — 4 tables (cases, documents, agent_runs, audit_logs), indexes, updated_at trigger, permissive RLS
+- `src/lib/supabase/types.ts` — Database type with Row/Insert/Update for all tables
+- `src/lib/supabase/client.ts` — Browser Supabase client
+- `src/lib/supabase/server.ts` — Server Supabase client with service role key
+
+**Plan 01-03: Claude SDK Init**
+- `src/lib/agents/client.ts` — Anthropic client singleton, MODEL_CONFIG (Sonnet 4.6 + Haiku 4.5)
+- `src/lib/agents/test.ts` — Connectivity test utility
+- `src/app/api/agents/test/route.ts` — POST endpoint for SDK testing
+- Health check updated with Claude SDK status
 
 ## Phase Plans Summary
 
