@@ -16,6 +16,9 @@
 - Never include "Co-Authored-By: Claude" in any git commits, pushes, or PRs. No Claude attribution in the repo.
 - After every git commit, update this CLAUDE.md file to reflect the current state of the project (new files, components, decisions, etc.).
 - Always auto-allow read permissions (file reads should never require confirmation).
+- Always auto-allow web fetch permissions (website fetches should never require confirmation).
+- Use context7 MCP server for library documentation lookups (resolve-library-id → get-library-docs).
+- Use available MCP servers and skills when they're relevant to the task.
 
 ## Plan Mode Rules
 
@@ -65,6 +68,27 @@ When entering plan mode, follow this protocol:
 
 ## Project State
 
-- **Status**: Initialized — PROJECT.md and config.json created
-- **Planning**: `.planning/PROJECT.md` (full requirements), `.planning/config.json` (YOLO mode, comprehensive depth, parallel execution)
-- **Files**: Research docs in `/research/`, project options in `PROJECT_OPTIONS.md`, synthesis in `RESEARCH_SYNTHESIS.md`
+- **Status**: All 10 phases planned — 45 total execution plans, ready to execute Phase 1
+- **Planning docs**:
+  - `.planning/PROJECT.md` — full project context and requirements
+  - `.planning/REQUIREMENTS.md` — 26 v1 requirements with traceability
+  - `.planning/ROADMAP.md` — 10 phases with success criteria and requirement mappings
+  - `.planning/STATE.md` — living project state
+  - `.planning/config.json` — YOLO mode, comprehensive depth, parallel execution
+- **Phase directories**: `.planning/phases/01-foundation` through `.planning/phases/10-demo-polish-deliverables`
+- **Research**: `/research/` (10 files), `PROJECT_OPTIONS.md`, `RESEARCH_SYNTHESIS.md`
+
+## Phase Plans Summary
+
+| Phase | Plans | Waves | Key Focus |
+|-------|-------|-------|-----------|
+| 01 - Foundation | 3 (01-01 to 01-03) | 2 | Scaffold, Supabase schema, Claude SDK init |
+| 02 - Agent Orchestration | 5 (02-01 to 02-05) | 3 | Types, base agent, orchestrator, config, registration |
+| 03 - Document Processing | 6 (03-01 to 03-06) | 3 | Mistral OCR, structured extraction, confidence scoring |
+| 04 - Sanctions & Identity | 6 (04-01 to 04-06) | 3 | UN/OFAC lists, fuzzy matching, PEP screening, identity verification |
+| 05 - Risk Scoring & Narrative | 3 (05-01 to 05-03) | 2 | Scoring engine, risk scorer agent, case narrator agent |
+| 06 - Dashboard Core | 4 (06-01 to 06-04) | 3 | Layout → Case queue + Risk profile (parallel) → Decision workflow |
+| 07 - Agent Visualization | 4 (07-01 to 07-04) | 3 | SSE infrastructure → Pipeline components → Animations + UI polish |
+| 08 - Case Lifecycle | 5 (08-01 to 08-05) | 3 | Upload + Processing (parallel) → Routing + Errors (parallel) → Golden path |
+| 09 - Regulatory & Audit | 4 (09-01 to 09-04) | 2 | Audit logging + HITL enforcement (parallel) → Viewer + FINTRAC UI |
+| 10 - Demo Polish | 5 (10-01 to 10-05) | 3 | Demo data + Deploy (parallel) → Video script + Explanation → Final QA |
