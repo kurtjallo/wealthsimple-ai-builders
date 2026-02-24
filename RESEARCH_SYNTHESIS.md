@@ -48,7 +48,7 @@
 **Why this wins**:
 - **Differentiation**: Falls squarely in the "whitespace" -- almost no applicants will build operational/infrastructure tooling. Most will build consumer chatbots.
 - **Impressiveness**: Multi-agent orchestration is the 2026 industry direction (Gartner: 40% of enterprise apps will feature AI agents by 2026). AWS reports 200-2000% productivity gains for agentic KYC/AML.
-- **Feasibility (5 days)**: CrewAI or Claude Agent SDK for multi-agent orchestration + Mistral OCR for document processing + Claude Sonnet for reasoning/classification + Streamlit or Next.js for dashboard UI. Stack B from the tools research gets you there.
+- **Feasibility (5 days)**: CrewAI or Google GenAI SDK for multi-agent orchestration + Mistral OCR for document processing + Gemini 2.5 Pro for reasoning/classification + Streamlit or Next.js for dashboard UI. Stack B from the tools research gets you there.
 - **WS alignment**: Directly addresses their stated priorities -- they already use ML for "optimizing onboarding experiences" and fraud detection. This builds on their engineering blog themes. Shows systems thinking, not just API wrapping.
 - **Regulatory savvy**: Demonstrates clear understanding of where AI can act autonomously (document verification, risk scoring, data extraction) and where humans must decide (STR filing, account freeze decisions, enhanced due diligence escalation). FINTRAC/PCMLTFA compliance awareness is a differentiator.
 - **Demo-ability**: Visually compelling workflow -- show documents flowing in, agents processing in parallel, risk scores populating, human decision points clearly marked. The "before: 5 days / after: 15 minutes" contrast is powerful in a 2-min demo.
@@ -62,8 +62,8 @@
 **What breaks at scale**: Agent coordination complexity -- as the number of concurrent cases grows, orchestration latency and error propagation between agents become the bottleneck. Need robust error handling, retry logic, and circuit breakers. Also, OCR accuracy on non-standard documents degrades, requiring human fallback pipelines.
 
 **Rough tech stack**:
-- **LLM**: Claude Sonnet 4.6 (reasoning/classification) + Claude Haiku 4.5 (routing/triage)
-- **Agents**: CrewAI (fastest to prototype multi-agent) or Claude Agent SDK
+- **LLM**: Gemini 2.5 Pro (reasoning/classification) + Gemini 2.5 Flash (routing/triage)
+- **Agents**: CrewAI (fastest to prototype multi-agent) or Google GenAI SDK
 - **Document processing**: Mistral OCR + LlamaIndex for structured extraction
 - **UI**: Next.js via v0 (polished dashboard) or Streamlit (faster)
 - **Backend**: Supabase (DB + auth + vector search)
@@ -78,7 +78,7 @@
 **Why this wins**:
 - **Differentiation**: Novel paradigm -- proactive/agentic rather than reactive. Aligns with 2026 wealthtech predictions about "agentic AI that anticipates needs." Almost no applicants will think beyond the "user asks a question" model.
 - **Impressiveness**: Demonstrates the "collapse workflow stages" pattern from Wiz and the "event-driven lifecycle" pattern from Rippling. Shows cross-product thinking that mirrors WS's own vision of "seamless product integration" (CEO Katchen's stated goal).
-- **Feasibility (5 days)**: Simulate life events with synthetic data. Claude Sonnet for reasoning across financial scenarios. Single-agent with structured tool use. UI showing timeline of detected events -> generated plans -> approval workflow.
+- **Feasibility (5 days)**: Simulate life events with synthetic data. Gemini 2.5 Pro for reasoning across financial scenarios. Single-agent with structured tool use. UI showing timeline of detected events -> generated plans -> approval workflow.
 - **WS alignment**: CEO Katchen explicitly values "making products work together so the value of doing something with Wealthsimple gets better." This is exactly that. Addresses the "financial planning gaps" pain point (no holistic tool connecting all accounts). Democratizes advice currently gated at $100K+.
 - **Regulatory fit**: Clean human-in-the-loop model -- AI generates recommendations, human approves. Suitability determination remains with the human. Explainable: every recommendation links to the detected event and specific financial reasoning.
 - **Demo-ability**: Highly visual -- show a life event detected, watch cascading recommendations populate across products, human reviews and approves. The "before: scattered manual research across 5 products / after: unified action plan in seconds" is compelling.
@@ -92,8 +92,8 @@
 **What breaks at scale**: Life event detection accuracy -- false positives (detecting a "job change" from a one-time freelance payment) trigger unnecessary plans and erode trust. Needs a confidence scoring system and thresholds that improve with feedback. Also, cross-product optimization becomes computationally expensive as the number of products and tax scenarios grows.
 
 **Rough tech stack**:
-- **LLM**: Claude Sonnet 4.6 (scenario modeling and plan generation)
-- **Agents**: Claude Agent SDK (structured tool use for financial calculations)
+- **LLM**: Gemini 2.5 Pro (scenario modeling and plan generation)
+- **Agents**: Google GenAI SDK (structured tool use for financial calculations)
 - **UI**: Next.js via v0 (timeline + approval workflow UI)
 - **Backend**: Supabase (user data + event history)
 - **Financial data**: Simulated Plaid-like data for demo
@@ -122,9 +122,9 @@
 **What breaks at scale**: Test coverage completeness -- the space of possible financial queries is infinite, so the test suite can never be truly comprehensive. Also, evaluation accuracy: using one LLM to judge another's compliance creates a recursive trust problem. At scale, you need human-validated ground truth sets that grow with each regulatory change.
 
 **Rough tech stack**:
-- **LLM**: Claude Sonnet 4.6 (test generation + evaluation)
+- **LLM**: Gemini 2.5 Pro (test generation + evaluation)
 - **Framework**: Python + pytest architecture (familiar to WS's engineering team)
-- **Test generation**: Programmatic scenario builder + Claude for adversarial prompt generation
+- **Test generation**: Programmatic scenario builder + Gemini for adversarial prompt generation
 - **UI**: Streamlit (dashboard with test results, trends, drill-downs)
 - **Backend**: Supabase (test history + results storage)
 - **Deploy**: Railway or Streamlit Cloud
@@ -136,7 +136,7 @@
 | Criterion | #1 KYC/AML Orchestrator | #2 Life Event Orchestrator | #3 Compliance Testing Framework |
 |-----------|------------------------|---------------------------|-------------------------------|
 | **Impressiveness** | Very High -- multi-agent, real operational impact | High -- novel paradigm, cross-product | High -- infrastructure thinking, production-grade |
-| **Feasibility (5 days)** | Medium-High -- CrewAI accelerates, OCR is mature | High -- single agent, simulation-friendly | Highest -- core is prompt eng + eval logic |
+| **Feasibility (5 days)** | Medium-High -- GenAI SDK accelerates, OCR is mature | High -- single agent, simulation-friendly | Highest -- core is prompt eng + eval logic |
 | **WS Alignment** | Very High -- operational tooling, blog themes | Very High -- CEO's product vision, client value | Very High -- engineering blog, LLM Gateway |
 | **Differentiation** | Very High -- operational whitespace | High -- proactive paradigm is rare | Highest -- virtually zero competitors |
 | **Demo Impact** | Very High -- visual workflow, clear before/after | High -- timeline UI, cascading recommendations | High -- red/green tests, violation dashboard |
@@ -198,8 +198,8 @@ The demo video narrative writes itself: "A compliance officer gets a new account
 ## Tech Stack Summary (Chosen Project)
 
 ```
-LLM:           Claude Sonnet 4.6 (reasoning) + Claude Haiku 4.5 (routing)
-Agents:        CrewAI or Claude Agent SDK
+LLM:           Gemini 2.5 Pro (reasoning) + Gemini 2.5 Flash (routing)
+Agents:        CrewAI or Google GenAI SDK
 Documents:     Mistral OCR ($0.001/page) + LlamaIndex for extraction
 UI:            Next.js via v0 + Vercel AI SDK (polished dashboard)
 Backend:       Supabase (PostgreSQL + pgvector + auth)
@@ -213,7 +213,7 @@ Timeline:       4-5 days
 
 ## Build Sequence (5-Day Plan)
 
-**Day 1**: Core agent architecture -- define agents (Document Processor, Identity Verifier, Risk Scorer, Case Narrator), set up CrewAI/Claude SDK orchestration, get basic agent-to-agent communication working.
+**Day 1**: Core agent architecture -- define agents (Document Processor, Identity Verifier, Risk Scorer, Case Narrator), set up CrewAI/Google GenAI SDK orchestration, get basic agent-to-agent communication working.
 
 **Day 2**: Document processing pipeline -- Mistral OCR integration, structured data extraction with LlamaIndex, identity verification mock (simulate sanctions/PEP database lookups), risk scoring logic.
 

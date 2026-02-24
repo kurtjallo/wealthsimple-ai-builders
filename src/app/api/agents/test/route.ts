@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { testClaudeConnectivity } from "@/lib/agents/test";
+import { testGeminiConnectivity } from "@/lib/agents/test";
 
 export async function POST() {
-  const result = await testClaudeConnectivity();
+  const result = await testGeminiConnectivity();
 
   return NextResponse.json(result, {
     status: result.success ? 200 : 503,

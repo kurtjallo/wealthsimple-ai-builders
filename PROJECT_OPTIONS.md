@@ -22,7 +22,7 @@
 **Critical human decision**: Whether to file a Suspicious Transaction Report (FINTRAC legal requirement)
 **Breaks at scale**: Agent coordination complexity, OCR accuracy on non-standard docs
 
-**Stack**: Claude Sonnet + CrewAI + Mistral OCR + Next.js (v0) + Supabase + Vercel
+**Stack**: Gemini 2.5 Pro + CrewAI + Mistral OCR + Next.js (v0) + Supabase + Vercel
 **Build time**: 4-5 days
 
 ---
@@ -44,7 +44,7 @@
 **Critical human decision**: Investment reallocation approval (CIRO suitability requirement)
 **Breaks at scale**: Life event detection false positives erode trust
 
-**Stack**: Claude Sonnet + Claude Agent SDK + Next.js (v0) + Supabase + Vercel
+**Stack**: Gemini 2.5 Pro + Google GenAI SDK + Next.js (v0) + Supabase + Vercel
 **Build time**: 3-4 days
 
 ---
@@ -66,7 +66,7 @@
 **Critical human decision**: What compliance threshold is "good enough" for production
 **Breaks at scale**: Test coverage can never be comprehensive; LLM-judging-LLM creates recursive trust issues
 
-**Stack**: Claude Sonnet + Python/pytest + Streamlit + Supabase + Railway
+**Stack**: Gemini 2.5 Pro + Python/pytest + Streamlit + Supabase + Railway
 **Build time**: 2-3 days
 
 ---

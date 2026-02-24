@@ -4,7 +4,7 @@
 
 ### Agent Orchestration (ORCH)
 
-- [v1] **ORCH-01**: Multi-agent system using Claude Agent SDK with specialized agents working in parallel
+- [v1] **ORCH-01**: Multi-agent system using Google GenAI SDK with specialized agents working in parallel
 - [v1] **ORCH-02**: Document Processor agent — Mistral OCR for real document extraction, structured data output
 - [v1] **ORCH-03**: Identity Verifier agent — cross-reference extracted identity data against verification sources
 - [v1] **ORCH-04**: Sanctions Screener agent — screen against real sanctions lists (UN, OFAC) and PEP databases

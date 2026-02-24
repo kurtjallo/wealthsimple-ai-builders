@@ -8,7 +8,7 @@
 
 **What it does**: Orchestrates document intake, identity verification, sanctions screening, risk scoring, and case narrative generation using specialized AI agents working in parallel. A compliance officer reviews a synthesized risk profile with linked evidence instead of reading hundreds of pages.
 
-**Stack**: Claude Sonnet 4.6 + Claude Agent SDK + Mistral OCR + Next.js (v0/shadcn) + Supabase + Vercel
+**Stack**: Gemini 2.5 Pro/Flash + Google GenAI SDK + Mistral OCR + Next.js (v0/shadcn) + Supabase + Vercel
 
 ## Rules
 
@@ -68,7 +68,7 @@ When entering plan mode, follow this protocol:
 
 ## Project State
 
-- **Status**: Phase 1 complete — Next.js scaffold, Supabase schema, Claude SDK init all done. Ready for Phase 2.
+- **Status**: Phase 3 complete — Document processing pipeline with Mistral OCR, structured extraction, confidence scoring. Ready for Phase 4.
 - **Planning docs**:
   - `.planning/PROJECT.md` — full project context and requirements
   - `.planning/REQUIREMENTS.md` — 26 v1 requirements with traceability
@@ -87,7 +87,7 @@ When entering plan mode, follow this protocol:
 - 13 shadcn/ui components: button, card, badge, input, textarea, separator, scroll-area, table, tabs, alert, dialog, dropdown-menu, sonner
 - Domain types: `src/types/index.ts` — Case, Document, AgentRun, AuditLog interfaces
 - App shell: KYC/AML card at `/`, health check at `/api/health`
-- `.env.example` with Supabase, Anthropic, Mistral keys
+- `.env.example` with Supabase, Gemini, Mistral keys
 
 **Plan 01-02: Supabase Schema & Types**
 - `supabase/migrations/00001_initial_schema.sql` — 4 tables (cases, documents, agent_runs, audit_logs), indexes, updated_at trigger, permissive RLS
@@ -95,17 +95,69 @@ When entering plan mode, follow this protocol:
 - `src/lib/supabase/client.ts` — Browser Supabase client
 - `src/lib/supabase/server.ts` — Server Supabase client with service role key
 
-**Plan 01-03: Claude SDK Init**
-- `src/lib/agents/client.ts` — Anthropic client singleton, MODEL_CONFIG (Sonnet 4.6 + Haiku 4.5)
+**Plan 01-03: Google GenAI SDK Init**
+- `src/lib/agents/client.ts` — GoogleGenerativeAI client singleton, MODEL_CONFIG (Gemini 2.5 Pro + Flash)
 - `src/lib/agents/test.ts` — Connectivity test utility
 - `src/app/api/agents/test/route.ts` — POST endpoint for SDK testing
-- Health check updated with Claude SDK status
+- Health check updated with Gemini SDK status
+
+### Phase 3: Document Processing (Plans 03-01 to 03-06)
+
+**Plan 03-01: OCR Types + Mistral Client**
+- `src/types/documents.ts` — ExtractedField<T>, ExtractedDocumentData (discriminated union), 4 document types
+- `src/lib/ocr/types.ts` — OcrPage, OcrImage, OcrResponse
+- `src/lib/ocr/mistral-client.ts` — processDocument(), extractFullText(), ocrExtractText()
+
+**Plan 03-02: DB Schema + Storage**
+- `supabase/migrations/003_documents_storage.sql` — Extended documents table with OCR/confidence/status fields
+- `src/lib/supabase/storage.ts` — uploadDocument(), getDocumentSignedUrl(), downloadDocument()
+- `src/lib/supabase/documents.ts` — Full CRUD lifecycle (pending → processing → completed/failed)
+
+**Plan 03-03: Structured Extractor**
+- `src/lib/ocr/extraction-prompts.ts` — Per-document-type extraction prompts with confidence scoring
+- `src/lib/ocr/structured-extractor.ts` — Gemini-powered extraction with per-field confidence
+
+**Plan 03-04: Document Processor Agent**
+- `src/lib/agents/document-processor.ts` — Full pipeline: OCR → extraction → persistence
+- `src/lib/agents/types.ts` — Shared Agent<TInput, TOutput> interface
+
+**Plan 03-05: API Routes**
+- `src/app/api/documents/upload/route.ts` — Multipart upload with validation
+- `src/app/api/documents/process/route.ts` — Trigger processing
+- `src/app/api/documents/[id]/route.ts` — Retrieve document + results
+
+**Plan 03-06: E2E Test**
+- `scripts/test-document-processing.ts` — End-to-end pipeline validation
+- `test-documents/README.md` — Test document setup instructions
+
+### Phase 2: Agent Orchestration Core (Plans 02-01 to 02-05)
+
+**Plan 02-01: Agent & Pipeline Types**
+- `src/types/agents.ts` — 16 interfaces: AgentResult<T>, AgentConfig, Input/Output for all 5 agents, ExtractedField, IdentityMatch, SanctionsMatch, RiskFactor
+- `src/types/pipeline.ts` — PipelineStage (7-state FSM), PIPELINE_TRANSITIONS, PipelineState, PipelineError, PipelineEvent
+
+**Plan 02-02: Base Agent Runner + Orchestrator**
+- `src/lib/agents/agent-config.ts` — AGENT_CONFIGS for 6 agent types (model, timeout, retry settings)
+- `src/lib/agents/base-agent.ts` — runAgent() with timeout, retry (exponential backoff), typed AgentResult
+- `src/lib/agents/orchestrator.ts` — processCase(), registerAgent(), state machine, parallel Identity+Sanctions
+
+**Plan 02-03: Stub Agents**
+- `src/lib/agents/stubs/` — 5 stub agents with realistic data and simulated delays (200-1500ms)
+- `src/lib/agents/stubs/index.ts` — registerAllStubs() + re-exports
+
+**Plan 02-04: Error Handling**
+- `src/lib/agents/error-handling.ts` — 6 error categories, classifyError(), graceful degradation, formatPipelineErrors()
+- Orchestrator updated: Promise.allSettled for parallel verification, getPipelineSummary()
+
+**Plan 02-05: API Endpoint + Integration Test**
+- `src/app/api/cases/process/route.ts` — POST endpoint, validates input, runs full pipeline
+- `src/lib/agents/__tests__/pipeline.test.ts` — 37/37 assertions passing
 
 ## Phase Plans Summary
 
 | Phase | Plans | Waves | Key Focus |
 |-------|-------|-------|-----------|
-| 01 - Foundation | 3 (01-01 to 01-03) | 2 | Scaffold, Supabase schema, Claude SDK init |
+| 01 - Foundation | 3 (01-01 to 01-03) | 2 | Scaffold, Supabase schema, Google GenAI SDK init |
 | 02 - Agent Orchestration | 5 (02-01 to 02-05) | 3 | Types, base agent, orchestrator, config, registration |
 | 03 - Document Processing | 6 (03-01 to 03-06) | 3 | Mistral OCR, structured extraction, confidence scoring |
 | 04 - Sanctions & Identity | 6 (04-01 to 04-06) | 3 | UN/OFAC lists, fuzzy matching, PEP screening, identity verification |

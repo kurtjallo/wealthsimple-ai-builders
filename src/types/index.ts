@@ -1,3 +1,7 @@
+// Re-export agent and pipeline types
+export * from './agents';
+export * from './pipeline';
+
 // Case status lifecycle
 export type CaseStatus = 'pending' | 'processing' | 'review' | 'approved' | 'denied' | 'escalated';
 
@@ -9,6 +13,9 @@ export type AgentRunStatus = 'pending' | 'running' | 'completed' | 'failed';
 
 // Document types
 export type DocumentType = 'passport' | 'drivers_license' | 'utility_bill' | 'bank_statement' | 'corporate_doc';
+
+// Document processing status
+export type DocumentProcessingStatus = 'pending' | 'processing' | 'completed' | 'failed';
 
 // Risk levels
 export type RiskLevel = 'low' | 'medium' | 'high' | 'critical';
@@ -41,11 +48,19 @@ export interface Document {
   case_id: string;
   type: DocumentType;
   file_name: string;
-  file_url: string;
+  file_path: string | null;
+  file_url: string | null;
   ocr_output: string | null;
+  ocr_raw_text: string | null;
   extracted_data: Record<string, unknown> | null;
   confidence: number | null;
+  overall_confidence: number | null;
+  processing_status: DocumentProcessingStatus;
+  processing_error: string | null;
+  processing_time_ms: number | null;
+  warnings: string[] | null;
   created_at: string;
+  updated_at: string;
 }
 
 export interface AgentRun {

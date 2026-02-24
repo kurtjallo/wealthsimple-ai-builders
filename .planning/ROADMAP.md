@@ -6,7 +6,7 @@ Build a multi-agent KYC/AML compliance system in 10 phases: scaffold the project
 
 ## Phases
 
-- [ ] **Phase 1: Foundation** - Project scaffolding, Next.js + Supabase + Claude Agent SDK setup
+- [ ] **Phase 1: Foundation** - Project scaffolding, Next.js + Supabase + Google GenAI SDK setup
 - [ ] **Phase 2: Agent Orchestration Core** - Multi-agent framework, agent definitions, inter-agent communication
 - [ ] **Phase 3: Document Processing** - Mistral OCR integration, structured data extraction, confidence scoring
 - [ ] **Phase 4: Sanctions & Identity Screening** - Real sanctions lists (UN, OFAC), identity verification, PEP screening
@@ -26,7 +26,7 @@ Build a multi-agent KYC/AML compliance system in 10 phases: scaffold the project
 **Success Criteria** (what must be TRUE):
   1. Next.js app runs locally with no errors
   2. Supabase database connected with schema for cases, agents, audit logs
-  3. Claude Agent SDK initialized and responding to test calls
+  3. Google GenAI SDK initialized and responding to test calls
   4. Project structure follows clean architecture (API routes, components, lib, types)
 **Research**: Unlikely — standard stack setup
 **Plans**: TBD
@@ -40,8 +40,8 @@ Build a multi-agent KYC/AML compliance system in 10 phases: scaffold the project
   2. Agents can pass structured data between each other
   3. Orchestrator handles agent failures gracefully (timeout, retry, fallback)
   4. A test case flows through the orchestration pipeline end-to-end (even with stub agents)
-**Research**: Likely — Claude Agent SDK patterns for multi-agent coordination
-**Research topics**: Claude Agent SDK multi-agent patterns, parallel agent execution, inter-agent communication protocols
+**Research**: Likely — Google GenAI SDK patterns for multi-agent coordination
+**Research topics**: Google GenAI SDK multi-agent patterns, parallel agent execution, inter-agent communication protocols
 **Plans**: TBD
 
 ### Phase 3: Document Processing
@@ -54,7 +54,7 @@ Build a multi-agent KYC/AML compliance system in 10 phases: scaffold the project
   3. Each extracted field has a confidence score
   4. Document Processor agent integrates into the orchestration pipeline
 **Research**: Likely — Mistral OCR API integration, structured extraction patterns
-**Research topics**: Mistral OCR API docs, document type detection, structured extraction with Claude
+**Research topics**: Mistral OCR API docs, document type detection, structured extraction with Gemini
 **Plans**: TBD
 
 ### Phase 4: Sanctions & Identity Screening
@@ -148,9 +148,9 @@ Build a multi-agent KYC/AML compliance system in 10 phases: scaffold the project
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
-| 2. Agent Orchestration Core | 0/TBD | Not started | - |
-| 3. Document Processing | 0/TBD | Not started | - |
+| 1. Foundation | 3/3 | Done | 2026-02-23 |
+| 2. Agent Orchestration Core | 5/5 | Done | 2026-02-24 |
+| 3. Document Processing | 6/6 | Done | 2026-02-24 |
 | 4. Sanctions & Identity Screening | 0/TBD | Not started | - |
 | 5. Risk Scoring & Case Narrative | 0/TBD | Not started | - |
 | 6. Dashboard Core | 0/TBD | Not started | - |

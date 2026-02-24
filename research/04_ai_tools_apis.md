@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-The AI tooling landscape in Feb 2026 is extraordinarily mature for rapid prototyping. A small team can build a polished, working AI prototype in under a week by combining the right LLM API, a lightweight agent framework, a fast UI layer, and managed backend services. The key insight: **don't build infrastructure -- compose APIs**. The fastest path to an impressive demo is Claude/GPT API + CrewAI or Claude Agent SDK for orchestration + Next.js (via v0) or Streamlit for UI + Supabase for backend.
+The AI tooling landscape in Feb 2026 is extraordinarily mature for rapid prototyping. A small team can build a polished, working AI prototype in under a week by combining the right LLM API, a lightweight agent framework, a fast UI layer, and managed backend services. The key insight: **don't build infrastructure -- compose APIs**. The fastest path to an impressive demo is Gemini/GPT API + CrewAI or Google GenAI SDK for orchestration + Next.js (via v0) or Streamlit for UI + Supabase for backend.
 
 ---
 
@@ -27,8 +27,8 @@ The AI tooling landscape in Feb 2026 is extraordinarily mature for rapid prototy
 | **DeepSeek R1** | $0.55 | ~$2.19 | 128K | Cheap reasoning, open-source alternative |
 
 ### Recommendation for Wealthsimple AI Builders Prototype
-- **Primary model**: Claude Sonnet 4.6 -- best quality/cost ratio, excellent tool use, strong at financial reasoning
-- **Fallback/fast model**: Claude Haiku 4.5 -- for real-time interactions, classification, routing
+- **Primary model**: Gemini 2.5 Pro -- best quality/cost ratio, excellent tool use, strong at financial reasoning
+- **Fallback/fast model**: Gemini 2.5 Flash -- for real-time interactions, classification, routing
 - **Alternative**: GPT-5 if you need 400K context or GPT ecosystem tools
 
 ### Key API Features (Feb 2026)
@@ -45,7 +45,7 @@ The AI tooling landscape in Feb 2026 is extraordinarily mature for rapid prototy
 | Framework | Speed to Prototype | Complexity Handling | Production Ready | GitHub Stars |
 |-----------|-------------------|---------------------|------------------|-------------|
 | **CrewAI** | Fastest | Medium | Good | 32K+ |
-| **Claude Agent SDK** | Fast | High | Excellent | N/A (Anthropic) |
+| **Google GenAI SDK** | Fast | High | Excellent | N/A (Google) |
 | **LangGraph** | Medium | Very High | Excellent | High |
 | **LlamaIndex** | Medium | High (data-focused) | Excellent | High |
 | **OpenAI Agents SDK** | Fast | Medium | Good | Growing |
@@ -58,13 +58,12 @@ The AI tooling landscape in Feb 2026 is extraordinarily mature for rapid prototy
 - Ideal for: testing agentic concepts, multi-agent workflows, role-based delegation
 - **Use when**: You want a working multi-agent demo in hours, not days
 
-### Claude Agent SDK -- Best for Anthropic-Powered Agents
-- Same tools, agent loop, and context management that powers Claude Code
-- 18+ built-in tools (Bash, file read/write, web search, code execution)
+### Google GenAI SDK -- Best for Gemini-Powered Agents
+- Direct access to Gemini models with function calling and tool use
 - Python and TypeScript SDKs
-- Hooks system for lifecycle event interception (6 Python, 12 TypeScript hooks)
-- Sandboxed execution environments
-- **Use when**: Building with Claude models and need deep tool integration
+- Structured output support and grounding with Google Search
+- Context caching for cost reduction
+- **Use when**: Building with Gemini models and need deep tool integration
 
 ### LangGraph -- Best for Complex Stateful Workflows
 - Stateful, multi-actor applications with cyclical graphs
@@ -81,7 +80,7 @@ The AI tooling landscape in Feb 2026 is extraordinarily mature for rapid prototy
 - **Use when**: Your prototype is primarily about intelligent document/data processing
 
 ### Recommendation
-**For a 1-week prototype**: Start with CrewAI for multi-agent demos OR Claude Agent SDK for Claude-native tool use. These have the lowest time-to-demo.
+**For a 1-week prototype**: Start with CrewAI for multi-agent demos OR Google GenAI SDK for Gemini-native tool use. These have the lowest time-to-demo.
 
 ---
 
@@ -130,7 +129,7 @@ The AI tooling landscape in Feb 2026 is extraordinarily mature for rapid prototy
 LLMs are increasingly replacing traditional OCR for document extraction. The best approach is now hybrid: use OCR for raw text extraction, then LLMs for structured data extraction and reasoning over documents. This yields 70% cost reduction and 90% faster turnaround vs. manual processing.
 
 ### Recommendation
-- **Fastest to prototype**: Mistral OCR (cheapest, fastest, excellent accuracy) + Claude for structured extraction
+- **Fastest to prototype**: Mistral OCR (cheapest, fastest, excellent accuracy) + Gemini for structured extraction
 - **Richest features**: LlamaParse for complex document types + LlamaIndex for RAG pipeline
 - **Enterprise**: Google Document AI or Azure Document Intelligence
 
@@ -251,8 +250,8 @@ Wealthsimple already integrates with Plaid for account authentication, balance c
 
 ### Stack A: "The Python Speedrun" (Fastest to Demo)
 ```
-LLM:        Claude Sonnet 4.6 (via Anthropic API)
-Agents:     CrewAI (multi-agent) or Claude Agent SDK
+LLM:        Gemini 2.5 Pro (via Gemini API)
+Agents:     CrewAI (multi-agent) or Google GenAI SDK
 UI:         Streamlit or Gradio
 Backend:    Supabase (DB + auth + vector search)
 Documents:  Mistral OCR + LlamaIndex
@@ -264,8 +263,8 @@ Deploy:     Streamlit Cloud or Railway
 
 ### Stack B: "The Polished Product" (Most Impressive)
 ```
-LLM:        Claude Sonnet 4.6 + Haiku 4.5 (routing)
-Agents:     Claude Agent SDK or LangGraph
+LLM:        Gemini 2.5 Pro + Gemini 2.5 Flash (routing)
+Agents:     Google GenAI SDK or LangGraph
 UI:         Next.js (generated via v0) + Vercel AI SDK
 Backend:    Supabase (DB + auth + vector search)
 Documents:  LlamaParse + Mistral OCR
@@ -291,7 +290,7 @@ Deploy:     Vercel
 
 ### Stack D: "The RAG Knowledge Base"
 ```
-LLM:        Claude Sonnet 4.6
+LLM:        Gemini 2.5 Pro
 Framework:  LlamaIndex (agentic RAG)
 UI:         Chainlit (chat) or Streamlit (dashboard)
 Vector DB:  Supabase pgvector or Pinecone
@@ -328,7 +327,7 @@ Deploy:     Railway or Streamlit Cloud
 
 | Component | Estimated Cost | Notes |
 |-----------|---------------|-------|
-| Claude Sonnet API | $5-20 | Development + testing |
+| Gemini API | $5-20 | Development + testing |
 | Supabase | $0 | Free tier |
 | Vercel | $0 | Free tier for hobby |
 | Alpha Vantage | $0 | Free tier (25 req/day) |
@@ -348,7 +347,7 @@ The barrier to entry has never been lower. A polished, working AI prototype can 
 - [AI API Pricing Comparison](https://www.scriptbyai.com/gpt-gemini-claude-pricing/)
 - [Top AI Agent Frameworks 2026](https://www.turing.com/resources/ai-agent-frameworks)
 - [CrewAI vs AutoGen vs LangGraph 2026](https://markaicode.com/crewai-vs-autogen-vs-langgraph-2026/)
-- [Claude Agent SDK Guide](https://datapoetica.medium.com/the-definitive-guide-to-the-claude-agent-sdk-building-the-next-generation-of-ai-69fda0a0530f)
+- [Google GenAI SDK Docs](https://ai.google.dev/gemini-api/docs)
 - [Best Speech-to-Text APIs 2026](https://smallest.ai/blog/best-speech-to-text-apis-for-voice-agents-in-2026)
 - [Best TTS APIs 2026](https://inworld.ai/resources/best-voice-ai-tts-apis-for-real-time-voice-agents-2026-benchmarks)
 - [ElevenLabs vs Cartesia 2026](https://elevenlabs.io/blog/elevenlabs-vs-cartesia)
