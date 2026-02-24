@@ -180,6 +180,84 @@ export interface Database {
         };
         Relationships: [];
       };
+      sanctions_entries: {
+        Row: {
+          id: string;
+          source: string;
+          source_id: string | null;
+          entry_type: string;
+          primary_name: string;
+          first_name: string | null;
+          last_name: string | null;
+          date_of_birth: string | null;
+          nationality: string | null;
+          programs: string[];
+          remarks: string | null;
+          source_url: string | null;
+          raw_data: Json | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          source: string;
+          source_id?: string | null;
+          entry_type: string;
+          primary_name: string;
+          first_name?: string | null;
+          last_name?: string | null;
+          date_of_birth?: string | null;
+          nationality?: string | null;
+          programs?: string[];
+          remarks?: string | null;
+          source_url?: string | null;
+          raw_data?: Json | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          source?: string;
+          source_id?: string | null;
+          entry_type?: string;
+          primary_name?: string;
+          first_name?: string | null;
+          last_name?: string | null;
+          date_of_birth?: string | null;
+          nationality?: string | null;
+          programs?: string[];
+          remarks?: string | null;
+          source_url?: string | null;
+          raw_data?: Json | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      sanctions_aliases: {
+        Row: {
+          id: string;
+          entry_id: string;
+          alias_name: string;
+          alias_type: string | null;
+          alias_quality: string | null;
+        };
+        Insert: {
+          id?: string;
+          entry_id: string;
+          alias_name: string;
+          alias_type?: string | null;
+          alias_quality?: string | null;
+        };
+        Update: {
+          id?: string;
+          entry_id?: string;
+          alias_name?: string;
+          alias_type?: string | null;
+          alias_quality?: string | null;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
