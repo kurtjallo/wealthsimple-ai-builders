@@ -68,7 +68,7 @@ When entering plan mode, follow this protocol:
 
 ## Project State
 
-- **Status**: Phase 3 complete — Document processing pipeline with Mistral OCR, structured extraction, confidence scoring. Ready for Phase 4.
+- **Status**: Phase 4 complete — Sanctions & identity screening with OFAC/UN/PEP lists, fuzzy matching, screening service, and two new agents. Ready for Phase 5.
 - **Planning docs**:
   - `.planning/PROJECT.md` — full project context and requirements
   - `.planning/REQUIREMENTS.md` — 26 v1 requirements with traceability
@@ -152,6 +152,44 @@ When entering plan mode, follow this protocol:
 **Plan 02-05: API Endpoint + Integration Test**
 - `src/app/api/cases/process/route.ts` — POST endpoint, validates input, runs full pipeline
 - `src/lib/agents/__tests__/pipeline.test.ts` — 37/37 assertions passing
+
+### Phase 4: Sanctions & Identity Screening (Plans 04-01 to 04-06)
+
+**Plan 04-01: Sanctions Schema + OFAC Parser**
+- `supabase/migrations/004_sanctions_schema.sql` — sanctions_entries + sanctions_aliases tables, pg_trgm extension, trigram GIN indexes for fuzzy search
+- `src/lib/sanctions/types.ts` — SanctionsEntry, SanctionsAlias, SanctionsListSource, SanctionsSearchResult, MatchConfidence
+- `src/lib/sanctions/ofac-parser.ts` — OFAC SDN XML parser using fast-xml-parser
+- `src/lib/sanctions/ofac-loader.ts` — Batch upsert (500/batch), idempotent re-runs
+- `scripts/load-ofac-sdn.ts` — CLI script to download and load full OFAC SDN list
+- `src/lib/supabase/types.ts` — Updated with sanctions_entries and sanctions_aliases table types
+
+**Plan 04-02: Fuzzy Name Matching Engine**
+- `src/lib/sanctions/name-normalizer.ts` — normalizeName, normalizeArabicName (~40 variant mappings), generatePhoneticCodes (Soundex + Double Metaphone), splitNameTokens
+- `src/lib/sanctions/fuzzy-match.ts` — fuzzyMatchName with Levenshtein, phonetic, token overlap (Jaccard), Arabic variant matching
+- `src/lib/sanctions/__tests__/fuzzy-match.test.ts` — 43 tests passing (Arabic variants, phonetic, reordering, non-matches)
+
+**Plan 04-03: UN Sanctions + PEP Database**
+- `src/lib/sanctions/un-parser.ts` — UN consolidated sanctions XML parser (individuals + entities)
+- `src/lib/sanctions/un-loader.ts` — Batch upsert following OFAC pattern
+- `scripts/load-un-sanctions.ts` — CLI download + load script
+- `src/lib/sanctions/pep-data.ts` — 50 fictional PEP entries across 8 categories with Arabic name variants
+- `scripts/load-pep-database.ts` — CLI PEP loader
+
+**Plan 04-04: Unified Screening Service**
+- `src/lib/sanctions/screening-service.ts` — screenName() and screenIdentity() querying all 3 lists via Supabase ILIKE + fuzzy refinement
+- `src/lib/sanctions/__tests__/screening-service.test.ts` — 17 tests passing
+- Risk classification: clear / potential_match / strong_match
+- DOB secondary verification with score boost/penalty
+
+**Plan 04-05: Sanctions Screener Agent**
+- `src/lib/agents/sanctions-screener.ts` — sanctionsScreenerHandler() compatible with orchestrator registerAgent() pattern
+- Screens against OFAC, UN, PEP with Gemini-powered summary generation
+- Falls back to deterministic summary if Gemini unavailable
+
+**Plan 04-06: Identity Verifier Agent**
+- `src/lib/agents/identity-verifier.ts` — identityVerifierHandler() with 4 verification checks
+- Name consistency (fuzzyMatchName), DOB plausibility, document validity, watchlist cross-reference
+- Weighted confidence: name 30%, DOB 20%, document 20%, watchlist 30%
 
 ## Phase Plans Summary
 
