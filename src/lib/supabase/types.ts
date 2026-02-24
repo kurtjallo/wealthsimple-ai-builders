@@ -46,6 +46,7 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       documents: {
         Row: {
@@ -53,34 +54,59 @@ export interface Database {
           case_id: string;
           type: string;
           file_name: string;
-          file_url: string;
+          file_path: string | null;
+          file_url: string | null;
           ocr_output: string | null;
+          ocr_raw_text: string | null;
           extracted_data: Json | null;
           confidence: number | null;
+          overall_confidence: number | null;
+          processing_status: string;
+          processing_error: string | null;
+          processing_time_ms: number | null;
+          warnings: string[] | null;
           created_at: string;
+          updated_at: string;
         };
         Insert: {
           id?: string;
           case_id: string;
           type: string;
           file_name: string;
-          file_url: string;
+          file_path?: string | null;
+          file_url?: string | null;
           ocr_output?: string | null;
+          ocr_raw_text?: string | null;
           extracted_data?: Json | null;
           confidence?: number | null;
+          overall_confidence?: number | null;
+          processing_status?: string;
+          processing_error?: string | null;
+          processing_time_ms?: number | null;
+          warnings?: string[] | null;
           created_at?: string;
+          updated_at?: string;
         };
         Update: {
           id?: string;
           case_id?: string;
           type?: string;
           file_name?: string;
-          file_url?: string;
+          file_path?: string | null;
+          file_url?: string | null;
           ocr_output?: string | null;
+          ocr_raw_text?: string | null;
           extracted_data?: Json | null;
           confidence?: number | null;
+          overall_confidence?: number | null;
+          processing_status?: string;
+          processing_error?: string | null;
+          processing_time_ms?: number | null;
+          warnings?: string[] | null;
           created_at?: string;
+          updated_at?: string;
         };
+        Relationships: [];
       };
       agent_runs: {
         Row: {
@@ -122,6 +148,7 @@ export interface Database {
           error?: string | null;
           created_at?: string;
         };
+        Relationships: [];
       };
       audit_logs: {
         Row: {
@@ -151,7 +178,10 @@ export interface Database {
           details?: Json | null;
           created_at?: string;
         };
+        Relationships: [];
       };
     };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
   };
 }

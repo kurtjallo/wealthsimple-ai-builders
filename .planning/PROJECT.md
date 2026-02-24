@@ -17,7 +17,7 @@ One compliance officer processes KYC cases in 3 minutes instead of 5 days, with 
 ### Active
 
 **Agent Orchestration**
-- [ ] Multi-agent system using Claude Agent SDK with specialized agents working in parallel
+- [ ] Multi-agent system using Google GenAI SDK with specialized agents working in parallel
 - [ ] Document Processor agent: Mistral OCR for real document extraction, structured data output
 - [ ] Identity Verifier agent: Cross-reference extracted identity data against verification sources
 - [ ] Sanctions Screener agent: Screen against real sanctions lists (UN, OFAC) and PEP databases
@@ -65,7 +65,7 @@ One compliance officer processes KYC cases in 3 minutes instead of 5 days, with 
 
 **Why KYC/AML**: Falls in the "whitespace" — almost no applicants will build operational tooling. Most will build consumer chatbots or portfolio analyzers (which WS already has via Willow and 30+ ML models). Multi-agent orchestration is the 2026 industry direction. AWS reports 200-2000% productivity gains for agentic KYC/AML.
 
-**WS alignment**: WS uses Claude/Anthropic internally, values domain understanding over tool expertise, celebrates code deletion, and prizes the maker-owner mentality. CTO: "The most valuable skill is deep understanding of the problem space." This project demonstrates systems thinking, regulatory depth, and production awareness.
+**WS alignment**: WS values domain understanding over tool expertise, celebrates code deletion, and prizes the maker-owner mentality. CTO: "The most valuable skill is deep understanding of the problem space." This project demonstrates systems thinking, regulatory depth, and production awareness.
 
 **Regulatory landscape**: FINTRAC requires human judgment for STR filing ("reasonable grounds to suspect"). OSFI E-23 flags agentic AI executing material transactions. PCMLTFA mandates record-keeping. CIRO requires human suitability determinations. AI can legally handle: document verification, sanctions screening, risk scoring, case narrative generation.
 
@@ -74,8 +74,8 @@ One compliance officer processes KYC cases in 3 minutes instead of 5 days, with 
 ## Constraints
 
 - **Timeline**: 7 days to working prototype + demo video + written explanation (March 2, 2026 deadline)
-- **Budget**: $20-40 in API costs total (Claude Sonnet, Mistral OCR, Supabase free tier, Vercel free tier)
-- **Stack**: Claude Sonnet 4.6 (reasoning) + Claude Haiku 4.5 (routing) + Claude Agent SDK (orchestration) + Mistral OCR (documents) + Next.js/v0/shadcn (UI) + Supabase (backend) + Vercel (deploy)
+- **Budget**: $20-40 in API costs total (Gemini, Mistral OCR, Supabase free tier, Vercel free tier)
+- **Stack**: Gemini 2.5 Pro (reasoning) + Gemini 2.5 Flash (routing) + Google GenAI SDK (orchestration) + Mistral OCR (documents) + Next.js/v0/shadcn (UI) + Supabase (backend) + Vercel (deploy)
 - **Demo format**: 2-3 minute video recorded with Screen Studio, must show working product not slides
 - **Single developer**: Solo build, Claude assists
 
@@ -83,8 +83,8 @@ One compliance officer processes KYC cases in 3 minutes instead of 5 days, with 
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Claude Agent SDK over CrewAI | Native Claude integration, simpler dependency tree, tighter coupling with LLM | — Pending |
-| Claude over Gemini for LLM | WS uses Claude internally — signals alignment with their stack | — Pending |
+| Google GenAI SDK over CrewAI | Direct Gemini integration, simpler dependency tree, tighter coupling with LLM | — Pending |
+| Gemini over Claude for LLM | Cost-effective, high-quality reasoning with large context window | — Pending |
 | Max realism (real OCR, real sanctions lists) | Proves the system actually works, not just a simulation. Stronger demo. | — Pending |
 | Maximum UI polish | The dashboard IS the demo — real-time agent visualization, animations, transitions sell the story | — Pending |
 | Next.js + v0/shadcn over Streamlit | Professional product feel vs. developer tool feel. Dashboard needs to look like a real compliance platform. | — Pending |

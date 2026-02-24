@@ -15,13 +15,13 @@ export async function GET() {
     checks.database = e instanceof Error ? `error: ${e.message}` : "error: unknown";
   }
 
-  // Check Claude SDK connectivity
+  // Check Gemini SDK connectivity
   try {
-    const { getAnthropicClient } = await import("@/lib/agents/client");
-    getAnthropicClient();
-    checks.claude = "ok";
+    const { getGeminiClient } = await import("@/lib/agents/client");
+    getGeminiClient();
+    checks.gemini = "ok";
   } catch (e) {
-    checks.claude = e instanceof Error ? `error: ${e.message}` : "error: unknown";
+    checks.gemini = e instanceof Error ? `error: ${e.message}` : "error: unknown";
   }
 
   const allOk = Object.values(checks).every((v) => v === "ok");

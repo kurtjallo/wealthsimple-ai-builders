@@ -43,14 +43,14 @@ graph LR
 | Agent | Role | Technology |
 |-------|------|------------|
 | **Document Processor** | OCR on passports, IDs, utility bills; extracts structured data with confidence scores | Mistral OCR |
-| **Identity Verifier** | Cross-references extracted identity data against verification sources | Claude Sonnet |
-| **Sanctions Screener** | Screens against real UN Security Council and OFAC SDN sanctions lists | Claude Sonnet + fuzzy matching |
+| **Identity Verifier** | Cross-references extracted identity data against verification sources | Gemini 2.5 Pro |
+| **Sanctions Screener** | Screens against real UN Security Council and OFAC SDN sanctions lists | Gemini 2.5 Pro + fuzzy matching |
 | **Risk Scorer** | Aggregates all agent signals into a composite risk score (0-100) | Deterministic engine |
-| **Case Narrator** | Generates a human-readable risk assessment narrative with linked evidence | Claude Sonnet |
+| **Case Narrator** | Generates a human-readable risk assessment narrative with linked evidence | Gemini 2.5 Pro |
 
 ## Tech Stack
 
-- **LLM**: Claude Sonnet 4.6 via Claude Agent SDK
+- **LLM**: Gemini 2.5 Pro via Google GenAI SDK
 - **OCR**: Mistral OCR API
 - **Frontend**: Next.js 15, shadcn/ui, Framer Motion
 - **Backend**: Supabase (PostgreSQL + Storage)
@@ -63,7 +63,7 @@ graph LR
 - Node.js 18+
 - npm
 - Supabase account (free tier)
-- Anthropic API key
+- Gemini API key
 - Mistral API key
 
 ### Setup
@@ -83,7 +83,7 @@ cp .env.example .env.local
 # - NEXT_PUBLIC_SUPABASE_URL
 # - NEXT_PUBLIC_SUPABASE_ANON_KEY
 # - SUPABASE_SERVICE_ROLE_KEY
-# - ANTHROPIC_API_KEY
+# - GEMINI_API_KEY
 # - MISTRAL_API_KEY
 
 # Run the dev server
