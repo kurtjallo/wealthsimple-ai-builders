@@ -68,7 +68,7 @@ When entering plan mode, follow this protocol:
 
 ## Project State
 
-- **Status**: Phase 4 complete — Sanctions & identity screening with OFAC/UN/PEP lists, fuzzy matching, screening service, and two new agents. Ready for Phase 5.
+- **Status**: Phase 8 complete — Dashboard, pipeline visualization, case lifecycle all done. Ready for Phase 9.
 - **Planning docs**:
   - `.planning/PROJECT.md` — full project context and requirements
   - `.planning/REQUIREMENTS.md` — 26 v1 requirements with traceability
@@ -190,6 +190,108 @@ When entering plan mode, follow this protocol:
 - `src/lib/agents/identity-verifier.ts` — identityVerifierHandler() with 4 verification checks
 - Name consistency (fuzzyMatchName), DOB plausibility, document validity, watchlist cross-reference
 - Weighted confidence: name 30%, DOB 20%, document 20%, watchlist 30%
+
+### Phase 5: Risk Scoring & Narrative (Plans 05-01 to 05-03)
+
+**Plan 05-01: Scoring Engine + Risk Scorer Agent**
+- `src/lib/agents/scoring-engine.ts` — Pure deterministic scoring: calculateCompositeRisk, calculateDocumentRisk, calculateIdentityRisk, calculateSanctionsRisk, getRiskCategory, DEFAULT_RISK_WEIGHTS
+- `src/lib/agents/risk-scorer.ts` — riskScorerHandler() + registerRiskScorer(), deterministic scoring + Gemini summary
+- Weighted formula: documents 20%, identity 25%, sanctions 35%, PEP 20%
+- Risk levels: Low (0-25), Medium (26-50), High (51-75), Critical (76-100)
+
+**Plan 05-02: Case Narrator Agent**
+- `src/lib/agents/narrator-prompts.ts` — NARRATOR_SYSTEM_PROMPT + buildNarrativePrompt() with 4 section formatters
+- `src/lib/agents/case-narrator.ts` — caseNarratorHandler() + registerCaseNarrator(), JSON output with fallback to escalate
+- Structured output: narrative, key_findings, recommended_action, evidence_links
+
+**Plan 05-03: Registration + API Endpoints**
+- `src/lib/agents/register-all.ts` — registerAllAgents() with idempotent double-call guard
+- `src/app/api/cases/[id]/risk/route.ts` — POST endpoint, triggers risk scoring, persists to agent_runs + updates cases
+- `src/app/api/cases/[id]/narrative/route.ts` — POST endpoint, triggers narrative gen, persists to agent_runs + updates cases
+- `src/lib/supabase/types.ts` — Added Enums + CompositeTypes to Database interface
+
+### Phase 6: Dashboard Core (Plans 06-01 to 06-04)
+
+**Plan 06-01: Dashboard Layout Shell**
+- `src/components/layout/sidebar.tsx` — Sidebar navigation with route highlighting
+- `src/components/layout/header.tsx` — Top header with system status badge
+- `src/components/layout/dashboard-shell.tsx` — DashboardShell content wrapper
+- `src/app/dashboard/layout.tsx` — Dashboard route group layout
+- `src/app/dashboard/page.tsx` — Dashboard overview page
+- `src/lib/constants.ts` — NAV_ITEMS, STATUS_CONFIG, RISK_LEVEL_CONFIG, DECISION_CONFIG
+
+**Plan 06-02: Case Queue Page**
+- `src/app/api/cases/route.ts` — GET endpoint for case list
+- `src/app/dashboard/cases/page.tsx` — Tabbed case queue (In Progress / Ready for Review / Completed)
+- `src/components/cases/case-queue-table.tsx` — Case table with status/risk badges
+- `src/components/cases/case-status-badge.tsx` — CaseStatusBadge component
+- `src/components/cases/case-risk-badge.tsx` — CaseRiskBadge component
+
+**Plan 06-03: Case Detail / Risk Profile**
+- `src/app/dashboard/cases/[id]/page.tsx` — Case detail page
+- `src/app/api/cases/[id]/route.ts` — GET endpoint for single case
+- `src/app/api/cases/[id]/agent-runs/route.ts` — GET endpoint for agent run results
+- `src/components/cases/risk-profile-card.tsx` — Risk score visualization
+- `src/components/cases/case-narrative-card.tsx` — Narrative display
+- `src/components/cases/agent-results-panel.tsx` — Agent results panel
+- `src/components/cases/evidence-section.tsx` — Evidence links
+
+**Plan 06-04: Decision Workflow**
+- `src/app/api/cases/[id]/decision/route.ts` — POST endpoint for approve/deny/escalate
+- `src/components/cases/decision-workflow.tsx` — Decision form with mandatory justification and audit trail
+
+### Phase 7: Agent Visualization (Plans 07-01 to 07-04)
+
+**Plan 07-01: SSE Streaming Infrastructure**
+- `src/app/api/cases/[caseId]/stream/route.ts` — SSE endpoint for agent status streaming
+- `src/app/api/cases/[caseId]/agents/route.ts` — REST endpoint for agent status
+- `src/hooks/use-pipeline-stream.ts` — usePipelineStream hook
+- `src/hooks/use-agent-status.ts` — useAgentStatus hook
+
+**Plan 07-02: Pipeline Visualization Components**
+- `src/components/pipeline/agent-status-card.tsx` — Agent card with status, confidence, duration
+- `src/components/pipeline/agent-pipeline-view.tsx` — Fork/join pipeline layout
+- `src/components/pipeline/pipeline-stage-indicator.tsx` — Stage progress indicator
+- `src/components/pipeline/agent-status-badge.tsx` — Agent status badge
+
+**Plan 07-03: Framer Motion Animations**
+- `src/components/pipeline/confidence-ring.tsx` — Animated SVG circular confidence indicator
+- `src/components/pipeline/processing-timer.tsx` — Live elapsed timer with requestAnimationFrame
+- Enhanced all pipeline components with Framer Motion: entrance animations, glow-pulse, staggered reveals
+- `src/app/globals.css` — shimmer, glow-pulse, animate-glow-pulse keyframes
+
+**Plan 07-04: UI Polish**
+- `src/components/ui/status-dot.tsx` — Animated status indicator with pulse for online/running states
+- `src/components/ui/loading-skeleton.tsx` — CardSkeleton, TableRowSkeleton, TextBlockSkeleton, PipelineSkeleton
+- Enhanced `src/components/layout/header.tsx` — Sticky header with logo, system status, notification bell, user avatar
+- Enhanced `src/components/layout/sidebar.tsx` — Navigation links + Agent Systems health indicators
+- `src/app/globals.css` — Dashboard polish: scrollbar styles, card-interactive, fadeIn, status color utilities
+
+### Phase 8: Case Lifecycle Integration (Plans 08-01 to 08-05)
+
+**Plan 08-01: Document Upload**
+- `src/app/api/cases/[id]/documents/upload/route.ts` — Multipart upload endpoint
+- `src/components/cases/document-upload.tsx` — Drag-and-drop file upload component
+
+**Plan 08-02: Case Processing**
+- `src/app/api/cases/create/route.ts` — POST endpoint for case creation
+- `src/app/api/cases/[id]/process/route.ts` — POST endpoint to trigger pipeline
+- `src/lib/pipeline/case-processor.ts` — processCaseLifecycle() orchestrating full pipeline
+- `src/lib/pipeline/progress-emitter.ts` — ProgressEmitter class for SSE bridge
+
+**Plan 08-03: Delays + Routing**
+- `src/lib/pipeline/delay-simulator.ts` — Per-agent delay config (12-18s total pipeline)
+- `src/lib/pipeline/confidence-router.ts` — Per-agent confidence thresholds, routing decisions
+
+**Plan 08-04: Error Handling**
+- `src/lib/pipeline/error-recovery.ts` — classifyPipelineError(), getUserFacingError(), getRecoveryStrategy()
+- `src/components/cases/processing-error-display.tsx` — Collapsible error cards with severity coloring, retry button
+- `src/app/api/cases/[id]/retry/route.ts` — POST endpoint to retry failed case processing
+
+**Plan 08-05: Golden Path**
+- `src/app/cases/new/page.tsx` — 4-step wizard: applicant info → document upload → processing → completion
+- `src/app/api/cases/[id]/progress/route.ts` — SSE endpoint streaming pipeline progress events
+- `src/lib/pipeline/__tests__/golden-path.test.ts` — Integration test for full pipeline lifecycle
 
 ## Phase Plans Summary
 
