@@ -1,5 +1,6 @@
 'use client';
 
+import { motion, LayoutGroup } from 'framer-motion';
 import { AgentStatusCard } from './agent-status-card';
 import { PipelineStageIndicator } from './pipeline-stage-indicator';
 import { AgentStatusInfo } from '@/lib/hooks/use-agent-status';
@@ -43,135 +44,180 @@ export function AgentPipelineView({
       )}
 
       {/* Agent cards in pipeline layout */}
-      <div className="space-y-4">
-        {/* Stage 1: Document Processing (single agent, full width) */}
-        <div className="flex justify-center">
-          <div className="w-full max-w-md">
-            {docProcessor && (
+      <LayoutGroup>
+        <div className="space-y-4">
+          {/* Stage 1: Document Processing (single agent, full width) */}
+          <motion.div
+            className="flex justify-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0, duration: 0.5 }}
+          >
+            <div className="w-full max-w-md">
+              {docProcessor && (
+                <AgentStatusCard
+                  label={docProcessor.label}
+                  description={docProcessor.description}
+                  agentType={docProcessor.agentType}
+                  status={docProcessor.status}
+                  confidence={docProcessor.confidence}
+                  durationMs={docProcessor.durationMs}
+                  error={docProcessor.error}
+                />
+              )}
+            </div>
+          </motion.div>
+
+          {/* Connector arrow from doc processor to parallel stage */}
+          <motion.div
+            className="flex justify-center"
+            initial={{ scaleY: 0 }}
+            animate={{ scaleY: 1 }}
+            transition={{ delay: 0.15, duration: 0.3, ease: 'easeOut' }}
+            style={{ transformOrigin: 'top' }}
+          >
+            <div className="flex flex-col items-center">
+              <div className={cn(
+                'h-6 w-0.5',
+                (currentStage && ['parallel_verification', 'risk_scoring', 'narrative_generation', 'completed'].includes(currentStage))
+                  ? 'bg-emerald-400'
+                  : 'bg-slate-200',
+              )} />
+              {/* Fork indicator for parallel */}
+              <div className={cn(
+                'h-0.5 w-48',
+                (currentStage && ['parallel_verification', 'risk_scoring', 'narrative_generation', 'completed'].includes(currentStage))
+                  ? 'bg-emerald-400'
+                  : 'bg-slate-200',
+              )} />
+            </div>
+          </motion.div>
+
+          {/* Stage 2: Parallel Verification (two agents side-by-side) */}
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.5 }}
+          >
+            {identityVerifier && (
               <AgentStatusCard
-                label={docProcessor.label}
-                description={docProcessor.description}
-                agentType={docProcessor.agentType}
-                status={docProcessor.status}
-                confidence={docProcessor.confidence}
-                durationMs={docProcessor.durationMs}
-                error={docProcessor.error}
+                label={identityVerifier.label}
+                description={identityVerifier.description}
+                agentType={identityVerifier.agentType}
+                status={identityVerifier.status}
+                confidence={identityVerifier.confidence}
+                durationMs={identityVerifier.durationMs}
+                error={identityVerifier.error}
               />
             )}
-          </div>
-        </div>
+            {sanctionsScreener && (
+              <AgentStatusCard
+                label={sanctionsScreener.label}
+                description={sanctionsScreener.description}
+                agentType={sanctionsScreener.agentType}
+                status={sanctionsScreener.status}
+                confidence={sanctionsScreener.confidence}
+                durationMs={sanctionsScreener.durationMs}
+                error={sanctionsScreener.error}
+              />
+            )}
+          </motion.div>
 
-        {/* Connector arrow from doc processor to parallel stage */}
-        <div className="flex justify-center">
-          <div className="flex flex-col items-center">
+          {/* Connector arrow from parallel stage to risk scoring */}
+          <motion.div
+            className="flex justify-center"
+            initial={{ scaleY: 0 }}
+            animate={{ scaleY: 1 }}
+            transition={{ delay: 0.25, duration: 0.3, ease: 'easeOut' }}
+            style={{ transformOrigin: 'top' }}
+          >
+            <div className="flex flex-col items-center">
+              <div className={cn(
+                'h-0.5 w-48',
+                (currentStage && ['risk_scoring', 'narrative_generation', 'completed'].includes(currentStage))
+                  ? 'bg-emerald-400'
+                  : 'bg-slate-200',
+              )} />
+              <div className={cn(
+                'h-6 w-0.5',
+                (currentStage && ['risk_scoring', 'narrative_generation', 'completed'].includes(currentStage))
+                  ? 'bg-emerald-400'
+                  : 'bg-slate-200',
+              )} />
+            </div>
+          </motion.div>
+
+          {/* Stage 3: Risk Scoring (single agent) */}
+          <motion.div
+            className="flex justify-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
+            <div className="w-full max-w-md">
+              {riskScorer && (
+                <AgentStatusCard
+                  label={riskScorer.label}
+                  description={riskScorer.description}
+                  agentType={riskScorer.agentType}
+                  status={riskScorer.status}
+                  confidence={riskScorer.confidence}
+                  durationMs={riskScorer.durationMs}
+                  error={riskScorer.error}
+                />
+              )}
+            </div>
+          </motion.div>
+
+          {/* Connector arrow from risk scoring to narrative */}
+          <motion.div
+            className="flex justify-center"
+            initial={{ scaleY: 0 }}
+            animate={{ scaleY: 1 }}
+            transition={{ delay: 0.35, duration: 0.3, ease: 'easeOut' }}
+            style={{ transformOrigin: 'top' }}
+          >
             <div className={cn(
               'h-6 w-0.5',
-              (currentStage && ['parallel_verification', 'risk_scoring', 'narrative_generation', 'completed'].includes(currentStage))
+              (currentStage && ['narrative_generation', 'completed'].includes(currentStage))
                 ? 'bg-emerald-400'
                 : 'bg-slate-200',
             )} />
-            {/* Fork indicator for parallel */}
-            <div className={cn(
-              'h-0.5 w-48',
-              (currentStage && ['parallel_verification', 'risk_scoring', 'narrative_generation', 'completed'].includes(currentStage))
-                ? 'bg-emerald-400'
-                : 'bg-slate-200',
-            )} />
-          </div>
-        </div>
+          </motion.div>
 
-        {/* Stage 2: Parallel Verification (two agents side-by-side) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
-          {identityVerifier && (
-            <AgentStatusCard
-              label={identityVerifier.label}
-              description={identityVerifier.description}
-              agentType={identityVerifier.agentType}
-              status={identityVerifier.status}
-              confidence={identityVerifier.confidence}
-              durationMs={identityVerifier.durationMs}
-              error={identityVerifier.error}
-            />
-          )}
-          {sanctionsScreener && (
-            <AgentStatusCard
-              label={sanctionsScreener.label}
-              description={sanctionsScreener.description}
-              agentType={sanctionsScreener.agentType}
-              status={sanctionsScreener.status}
-              confidence={sanctionsScreener.confidence}
-              durationMs={sanctionsScreener.durationMs}
-              error={sanctionsScreener.error}
-            />
-          )}
+          {/* Stage 4: Case Narrative (single agent) */}
+          <motion.div
+            className="flex justify-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+          >
+            <div className="w-full max-w-md">
+              {caseNarrator && (
+                <AgentStatusCard
+                  label={caseNarrator.label}
+                  description={caseNarrator.description}
+                  agentType={caseNarrator.agentType}
+                  status={caseNarrator.status}
+                  confidence={caseNarrator.confidence}
+                  durationMs={caseNarrator.durationMs}
+                  error={caseNarrator.error}
+                />
+              )}
+            </div>
+          </motion.div>
         </div>
-
-        {/* Connector arrow from parallel stage to risk scoring */}
-        <div className="flex justify-center">
-          <div className="flex flex-col items-center">
-            <div className={cn(
-              'h-0.5 w-48',
-              (currentStage && ['risk_scoring', 'narrative_generation', 'completed'].includes(currentStage))
-                ? 'bg-emerald-400'
-                : 'bg-slate-200',
-            )} />
-            <div className={cn(
-              'h-6 w-0.5',
-              (currentStage && ['risk_scoring', 'narrative_generation', 'completed'].includes(currentStage))
-                ? 'bg-emerald-400'
-                : 'bg-slate-200',
-            )} />
-          </div>
-        </div>
-
-        {/* Stage 3: Risk Scoring (single agent) */}
-        <div className="flex justify-center">
-          <div className="w-full max-w-md">
-            {riskScorer && (
-              <AgentStatusCard
-                label={riskScorer.label}
-                description={riskScorer.description}
-                agentType={riskScorer.agentType}
-                status={riskScorer.status}
-                confidence={riskScorer.confidence}
-                durationMs={riskScorer.durationMs}
-                error={riskScorer.error}
-              />
-            )}
-          </div>
-        </div>
-
-        {/* Connector arrow from risk scoring to narrative */}
-        <div className="flex justify-center">
-          <div className={cn(
-            'h-6 w-0.5',
-            (currentStage && ['narrative_generation', 'completed'].includes(currentStage))
-              ? 'bg-emerald-400'
-              : 'bg-slate-200',
-          )} />
-        </div>
-
-        {/* Stage 4: Case Narrative (single agent) */}
-        <div className="flex justify-center">
-          <div className="w-full max-w-md">
-            {caseNarrator && (
-              <AgentStatusCard
-                label={caseNarrator.label}
-                description={caseNarrator.description}
-                agentType={caseNarrator.agentType}
-                status={caseNarrator.status}
-                confidence={caseNarrator.confidence}
-                durationMs={caseNarrator.durationMs}
-                error={caseNarrator.error}
-              />
-            )}
-          </div>
-        </div>
-      </div>
+      </LayoutGroup>
 
       {/* Error summary */}
       {pipelineUpdate && pipelineUpdate.errors.length > 0 && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 max-w-2xl mx-auto">
+        <motion.div
+          className="rounded-lg border border-red-200 bg-red-50 p-4 max-w-2xl mx-auto"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
           <h4 className="text-sm font-semibold text-red-800 mb-2">Pipeline Errors</h4>
           <ul className="space-y-1">
             {pipelineUpdate.errors.map((err, i) => (
@@ -180,7 +226,7 @@ export function AgentPipelineView({
               </li>
             ))}
           </ul>
-        </div>
+        </motion.div>
       )}
     </div>
   );

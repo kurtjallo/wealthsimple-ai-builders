@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import { PipelineStage } from '@/types';
 import { cn } from '@/lib/utils';
 import {
@@ -54,23 +55,40 @@ export function PipelineStageIndicator({
         const Icon = stage.icon;
 
         return (
-          <div key={stage.id} className="flex items-center">
+          <motion.div
+            key={stage.id}
+            className="flex items-center"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: index * 0.1, duration: 0.3 }}
+          >
             {/* Stage node */}
             <div className="flex flex-col items-center gap-1">
-              <div
+              <motion.div
                 className={cn(
-                  'flex h-9 w-9 items-center justify-center rounded-full border-2 transition-all duration-500',
+                  'flex h-9 w-9 items-center justify-center rounded-full border-2 transition-colors duration-500',
                   isActive && 'border-blue-500 bg-blue-50 text-blue-600 ring-4 ring-blue-100',
                   isCompleted && 'border-emerald-500 bg-emerald-50 text-emerald-600',
                   isPending && 'border-slate-200 bg-slate-50 text-slate-400',
                 )}
+                animate={{
+                  scale: isActive ? [1, 1.15, 1] : 1,
+                }}
+                transition={{
+                  scale: {
+                    duration: 0.5,
+                    ease: 'easeInOut',
+                    repeat: isActive ? Infinity : 0,
+                    repeatDelay: 1,
+                  },
+                }}
               >
                 {isCompleted ? (
                   <CheckCircle2 className="h-4 w-4" />
                 ) : (
                   <Icon className="h-4 w-4" />
                 )}
-              </div>
+              </motion.div>
               <span
                 className={cn(
                   'text-[10px] font-medium whitespace-nowrap',
@@ -85,14 +103,18 @@ export function PipelineStageIndicator({
 
             {/* Connector line between stages (except last) */}
             {index < STAGES.length - 1 && (
-              <div
+              <motion.div
                 className={cn(
-                  'h-0.5 w-8 mx-1 mt-[-16px] transition-colors duration-500',
+                  'h-0.5 w-8 mx-1 mt-[-16px]',
                   isCompleted ? 'bg-emerald-400' : 'bg-slate-200',
                 )}
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ delay: index * 0.1 + 0.05, duration: 0.3 }}
+                style={{ transformOrigin: 'left' }}
               />
             )}
-          </div>
+          </motion.div>
         );
       })}
     </div>
