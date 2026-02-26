@@ -8,6 +8,7 @@ import { RiskProfileCard } from '@/components/cases/risk-profile-card';
 import { CaseNarrativeCard } from '@/components/cases/case-narrative-card';
 import { AgentResultsPanel } from '@/components/cases/agent-results-panel';
 import { EvidenceSection } from '@/components/cases/evidence-section';
+import { DecisionWorkflow } from '@/components/cases/decision-workflow';
 import { CaseStatusBadge } from '@/components/cases/case-status-badge';
 import { CaseRiskBadge } from '@/components/cases/case-risk-badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,6 +26,7 @@ export default function CaseDetailPage() {
   const [agentRuns, setAgentRuns] = useState<AgentRun[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [decisionMade, setDecisionMade] = useState(false);
 
   const fetchData = useCallback(async () => {
     if (!caseId) return;
@@ -162,15 +164,20 @@ export default function CaseDetailPage() {
             evidenceLinks={narratorOutput?.evidence_links || []}
           />
 
-          {/* Decision section placeholder — built in Plan 04 */}
-          {caseData.status === 'review' && !caseData.decision && (
-            <Card className="border-dashed border-2 border-primary/20">
-              <CardContent className="py-8 text-center">
-                <p className="text-sm text-muted-foreground">
-                  Decision workflow will appear here when the case is ready for review.
-                </p>
-              </CardContent>
-            </Card>
+          {/* Decision workflow for review cases */}
+          {caseData.status === 'review' && !caseData.decision && !decisionMade && (
+            <DecisionWorkflow
+              caseId={caseData.id}
+              onDecisionMade={(decision, justification) => {
+                setCaseData(prev => prev ? {
+                  ...prev,
+                  status: decision,
+                  decision: decision,
+                  decision_justification: justification,
+                } : null);
+                setDecisionMade(true);
+              }}
+            />
           )}
 
           {/* Show existing decision if made */}
