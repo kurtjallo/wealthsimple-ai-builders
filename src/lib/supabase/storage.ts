@@ -1,53 +1,69 @@
-import { createServerSupabaseClient } from "./server";
+import { createServerSupabaseClient } from './server';
 
-const BUCKET_NAME = "documents";
+const BUCKET_NAME = 'case-documents';
 
 /**
  * Upload a document file to Supabase Storage.
- * Returns the storage path (not a URL).
+ * Files are stored under: {case_id}/{document_id}/{filename}
  */
 export async function uploadDocument(
   caseId: string,
-  fileName: string,
-  fileBuffer: Buffer,
-  contentType: string
-): Promise<{ path: string }> {
+  documentId: string,
+  file: File,
+): Promise<{ path: string; url: string }> {
   const supabase = createServerSupabaseClient();
-  const storagePath = `${caseId}/${Date.now()}-${fileName}`;
+
+  // Sanitize filename: replace spaces, keep extension
+  const sanitized = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+  const storagePath = `${caseId}/${documentId}/${sanitized}`;
 
   const { data, error } = await supabase.storage
     .from(BUCKET_NAME)
-    .upload(storagePath, fileBuffer, {
-      contentType,
-      upsert: false,
+    .upload(storagePath, file, {
+      contentType: file.type,
+      upsert: true,
     });
 
   if (error) {
-    throw new Error(`Failed to upload document: ${error.message}`);
+    throw new Error(`Storage upload failed: ${error.message}`);
   }
 
-  return { path: data.path };
+  return {
+    path: data.path,
+    url: storagePath,
+  };
 }
 
 /**
- * Get a signed URL for a document in storage.
- * URL expires after the specified duration (default 1 hour).
+ * Get a signed URL for a stored document (valid for 1 hour).
  */
-export async function getDocumentSignedUrl(
-  storagePath: string,
-  expiresInSeconds: number = 3600
-): Promise<string> {
+export async function getDocumentSignedUrl(storagePath: string): Promise<string> {
   const supabase = createServerSupabaseClient();
 
   const { data, error } = await supabase.storage
     .from(BUCKET_NAME)
-    .createSignedUrl(storagePath, expiresInSeconds);
+    .createSignedUrl(storagePath, 3600); // 1 hour expiry
 
   if (error) {
-    throw new Error(`Failed to get signed URL: ${error.message}`);
+    throw new Error(`Failed to create signed URL: ${error.message}`);
   }
 
   return data.signedUrl;
+}
+
+/**
+ * Delete a document from Supabase Storage.
+ */
+export async function deleteDocument(storagePath: string): Promise<void> {
+  const supabase = createServerSupabaseClient();
+
+  const { error } = await supabase.storage
+    .from(BUCKET_NAME)
+    .remove([storagePath]);
+
+  if (error) {
+    throw new Error(`Failed to delete document: ${error.message}`);
+  }
 }
 
 /**

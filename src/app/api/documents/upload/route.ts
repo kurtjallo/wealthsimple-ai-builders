@@ -51,12 +51,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Upload file to Supabase Storage
-    const fileBuffer = Buffer.from(await file.arrayBuffer());
+    const { randomUUID } = await import('crypto');
+    const documentId = randomUUID();
     const { path: storagePath } = await uploadDocument(
       caseId,
-      file.name,
-      fileBuffer,
-      file.type,
+      documentId,
+      file,
     );
 
     // Create document record in database

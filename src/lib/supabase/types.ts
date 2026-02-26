@@ -56,6 +56,8 @@ export interface Database {
           file_name: string;
           file_path: string | null;
           file_url: string | null;
+          file_size: number | null;
+          mime_type: string | null;
           ocr_output: string | null;
           ocr_raw_text: string | null;
           extracted_data: Json | null;
@@ -75,6 +77,8 @@ export interface Database {
           file_name: string;
           file_path?: string | null;
           file_url?: string | null;
+          file_size?: number | null;
+          mime_type?: string | null;
           ocr_output?: string | null;
           ocr_raw_text?: string | null;
           extracted_data?: Json | null;
@@ -94,6 +98,8 @@ export interface Database {
           file_name?: string;
           file_path?: string | null;
           file_url?: string | null;
+          file_size?: number | null;
+          mime_type?: string | null;
           ocr_output?: string | null;
           ocr_raw_text?: string | null;
           extracted_data?: Json | null;
