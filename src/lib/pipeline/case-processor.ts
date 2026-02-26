@@ -3,6 +3,8 @@ import { processCase } from '@/lib/agents/orchestrator';
 import { registerAllAgents } from '@/lib/agents/register-all';
 import { PipelineState, PipelineStage } from '@/types';
 import { createProgressEmitter, removeProgressEmitter } from './progress-emitter';
+import { simulateAgentDelay } from './delay-simulator';
+import { evaluateConfidenceRouting } from './confidence-router';
 import type { Database } from '@/lib/supabase/types';
 
 type CaseRow = Database['public']['Tables']['cases']['Row'];
@@ -106,6 +108,19 @@ export async function processCaseLifecycle(caseId: string): Promise<PipelineStat
 
     for (const { type, result } of agentResults) {
       if (result) {
+        // Emit "started" event
+        emitter.emit({
+          stage: pipelineState.stage,
+          agent_type: type,
+          status: 'started',
+          message: `${formatAgentName(type)} processing...`,
+        });
+
+        // Simulate processing time if the real agent was too fast (< 2s)
+        if (result.duration_ms < 2000) {
+          await simulateAgentDelay(type);
+        }
+
         await supabase.from('agent_runs').insert({
           case_id: caseId,
           agent_type: type,
@@ -127,6 +142,32 @@ export async function processCaseLifecycle(caseId: string): Promise<PipelineStat
           duration_ms: result.duration_ms,
         });
       }
+    }
+
+    // 5b. Evaluate confidence routing
+    const routing = evaluateConfidenceRouting(pipelineState);
+
+    // Persist routing result to audit trail
+    await supabase.from('audit_logs').insert({
+      case_id: caseId,
+      action: 'confidence_routing_evaluated',
+      actor_type: 'system',
+      actor_id: 'confidence-router',
+      details: {
+        requires_manual_review: routing.requires_manual_review,
+        routing_reasons: routing.routing_reasons,
+        recommended_action: routing.recommended_action,
+        low_confidence_agents: routing.low_confidence_agents,
+        overall_confidence: routing.overall_confidence,
+      },
+    });
+
+    if (routing.requires_manual_review) {
+      emitter.emit({
+        stage: pipelineState.stage,
+        status: 'completed',
+        message: `Case flagged for manual review: ${routing.routing_reasons.length} concern(s) detected`,
+      });
     }
 
     // 6. Update case with final results
