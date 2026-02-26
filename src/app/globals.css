@@ -130,6 +130,54 @@
   animation: glow-pulse 2s ease-in-out infinite;
 }
 
+/* === Dashboard Global Styles === */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.card-interactive {
+  transition: all 200ms ease;
+}
+
+.card-interactive:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.fade-in {
+  animation: fadeIn 300ms ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.text-status-success { color: #10b981; }
+.text-status-warning { color: #f59e0b; }
+.text-status-error { color: #ef4444; }
+.text-status-info { color: #3b82f6; }
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
