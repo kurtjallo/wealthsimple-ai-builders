@@ -52,8 +52,7 @@ export function HowItWorks() {
                 {/* Connecting dashed line between steps (desktop only) */}
                 {index < steps.length - 1 && (
                   <div
-                    className="hidden md:block absolute top-4 left-[calc(50%+20px)] w-[calc(100%-40px)]
-                      border-t-2 border-dashed border-[#E5E5E3] z-0"
+                    className="hidden md:block absolute top-4 left-[calc(50%+20px)] w-[calc(100%-40px)] border-t-2 border-dashed border-[#E5E5E3] z-0"
                     aria-hidden="true"
                   />
                 )}
