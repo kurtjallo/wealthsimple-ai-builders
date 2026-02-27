@@ -84,7 +84,9 @@ export function ProcessingErrorDisplay({
       <CardHeader className={`${config.bgColor} rounded-t-lg`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Icon className={`h-5 w-5 ${config.color}`} />
+            <span className={config.color}>
+              <Icon size={16} strokeWidth={1.5} />
+            </span>
             <CardTitle className="text-base">{title}</CardTitle>
             <Badge variant={config.badgeVariant}>
               {errors.length} {errors.length === 1 ? 'issue' : 'issues'}
@@ -97,8 +99,8 @@ export function ProcessingErrorDisplay({
               size="sm"
               variant="outline"
             >
-              <RefreshCw className={`h-4 w-4 mr-2 ${isRetrying ? 'animate-spin' : ''}`} />
-              {isRetrying ? 'Retrying...' : 'Retry Processing'}
+              <RefreshCw size={16} strokeWidth={1.5} className={isRetrying ? 'animate-spin' : ''} />
+              <span className="ml-2">{isRetrying ? 'Retrying...' : 'Retry Processing'}</span>
             </Button>
           )}
         </div>
@@ -119,7 +121,9 @@ export function ProcessingErrorDisplay({
                 onClick={() => toggleError(index)}
               >
                 <div className="flex items-start gap-2">
-                  <ErrorIcon className={`h-4 w-4 mt-0.5 ${errorConfig.color}`} />
+                  <span className={`mt-0.5 ${errorConfig.color}`}>
+                    <ErrorIcon size={16} strokeWidth={1.5} />
+                  </span>
                   <div>
                     <p className="text-sm font-medium">{error.title}</p>
                     <p className="text-xs text-muted-foreground">{error.agent_name}</p>
@@ -129,11 +133,13 @@ export function ProcessingErrorDisplay({
                   <Badge variant={errorConfig.badgeVariant} className="text-xs">
                     {error.severity}
                   </Badge>
-                  {isExpanded ? (
-                    <ChevronUp className="h-4 w-4 text-muted-foreground" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                  )}
+                  <span className="text-muted-foreground">
+                    {isExpanded ? (
+                      <ChevronUp size={16} strokeWidth={1.5} />
+                    ) : (
+                      <ChevronDown size={16} strokeWidth={1.5} />
+                    )}
+                  </span>
                 </div>
               </div>
 

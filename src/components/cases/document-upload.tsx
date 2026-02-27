@@ -164,7 +164,9 @@ export function DocumentUpload({ caseId, onUploadComplete, onAllUploaded, maxFil
           ${documents.length >= maxFiles ? 'opacity-50 pointer-events-none' : ''}
         `}
       >
-        <Upload className="mx-auto h-8 w-8 text-muted-foreground mb-3" />
+        <span className="flex justify-center text-muted-foreground mb-3">
+          <Upload size={20} strokeWidth={1.5} />
+        </span>
         <p className="text-sm font-medium">
           Drop files here or click to browse
         </p>
@@ -192,15 +194,23 @@ export function DocumentUpload({ caseId, onUploadComplete, onAllUploaded, maxFil
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   {doc.status === 'uploading' && (
-                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                    <span className="text-primary">
+                      <Loader2 size={16} strokeWidth={1.5} className="animate-spin" />
+                    </span>
                   )}
                   {doc.status === 'uploaded' && (
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
+                    <span className="text-green-500">
+                      <CheckCircle2 size={16} strokeWidth={1.5} />
+                    </span>
                   )}
                   {doc.status === 'error' && (
-                    <AlertCircle className="h-4 w-4 text-red-500" />
+                    <span className="text-red-500">
+                      <AlertCircle size={16} strokeWidth={1.5} />
+                    </span>
                   )}
-                  <File className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-muted-foreground">
+                    <File size={16} strokeWidth={1.5} />
+                  </span>
                   <div>
                     <p className="text-sm font-medium">{doc.file_name}</p>
                     <div className="flex gap-2 items-center">
@@ -221,7 +231,7 @@ export function DocumentUpload({ caseId, onUploadComplete, onAllUploaded, maxFil
                     removeDocument(doc.id);
                   }}
                 >
-                  <X className="h-4 w-4" />
+                  <X size={16} strokeWidth={1.5} />
                 </Button>
               </div>
             </Card>

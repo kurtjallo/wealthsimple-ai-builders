@@ -9,7 +9,6 @@ import {
   LayoutDashboard,
   FileStack,
   Activity,
-  Shield,
 } from 'lucide-react';
 import { getPipelineAgents } from '@/lib/config/agents';
 
@@ -30,8 +29,7 @@ export function Sidebar() {
   return (
     <aside className="flex h-full w-60 flex-col bg-sidebar border-r border-sidebar-border">
       {/* Branding */}
-      <div className="flex h-14 items-center gap-2 border-b border-sidebar-border px-4">
-        <Shield className="h-5 w-5 text-primary" />
+      <div className="flex h-14 items-center border-b border-sidebar-border px-4">
         <span className="text-foreground font-semibold text-sm tracking-tight">Sentinel</span>
       </div>
 
@@ -51,7 +49,7 @@ export function Sidebar() {
                   : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground',
               )}
             >
-              <Icon className="h-4 w-4 flex-shrink-0" />
+              <span className="flex-shrink-0"><Icon size={20} strokeWidth={1.5} /></span>
               {item.label}
             </Link>
           );

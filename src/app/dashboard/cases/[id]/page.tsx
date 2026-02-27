@@ -18,7 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Loader2, User, Mail, Calendar } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function CaseDetailPage() {
@@ -61,7 +61,7 @@ export default function CaseDetailPage() {
     return (
       <DashboardShell title="Loading...">
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          <span className="text-muted-foreground"><Loader2 size={20} strokeWidth={1.5} className="animate-spin" /></span>
           <span className="ml-2 text-sm text-muted-foreground">Loading case details...</span>
         </div>
       </DashboardShell>
@@ -94,7 +94,7 @@ export default function CaseDetailPage() {
       actions={
         <Link href="/dashboard/cases">
           <Button variant="outline" size="sm" className="gap-1.5">
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft size={16} strokeWidth={1.5} />
             Back to Queue
           </Button>
         </Link>
@@ -103,26 +103,17 @@ export default function CaseDetailPage() {
       {/* Case Header Info */}
       <Card>
         <CardContent className="flex items-center gap-6 py-4">
-          <div className="flex items-center gap-2">
-            <User className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-medium">{caseData.applicant_name}</span>
-          </div>
+          <span className="text-sm font-medium">{caseData.applicant_name}</span>
           {caseData.applicant_email && (
-            <div className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">{caseData.applicant_email}</span>
-            </div>
+            <span className="text-sm text-muted-foreground">{caseData.applicant_email}</span>
           )}
-          <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">
-              {new Date(caseData.created_at).toLocaleDateString('en-US', {
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric',
-              })}
-            </span>
-          </div>
+          <span className="text-sm text-muted-foreground">
+            {new Date(caseData.created_at).toLocaleDateString('en-US', {
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric',
+            })}
+          </span>
           <Separator orientation="vertical" className="h-6" />
           <CaseStatusBadge status={caseData.status} />
           <CaseRiskBadge

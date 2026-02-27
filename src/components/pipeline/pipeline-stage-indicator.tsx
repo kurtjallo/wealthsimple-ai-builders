@@ -67,8 +67,8 @@ export function PipelineStageIndicator({
               <motion.div
                 className={cn(
                   'flex h-9 w-9 items-center justify-center rounded-full border-2 transition-colors duration-500',
-                  isActive && 'border-primary bg-primary/10 text-primary ring-4 ring-primary/20',
-                  isCompleted && 'border-emerald-500 bg-emerald-50 text-emerald-600',
+                  isActive && 'border-primary bg-primary/5 text-primary ring-2 ring-primary/10',
+                  isCompleted && 'border-emerald-500 bg-emerald-500/5 text-emerald-600',
                   isPending && 'border-border bg-muted text-muted-foreground',
                 )}
                 animate={{
@@ -84,9 +84,9 @@ export function PipelineStageIndicator({
                 }}
               >
                 {isCompleted ? (
-                  <CheckCircle2 className="h-4 w-4" />
+                  <CheckCircle2 size={16} strokeWidth={1.5} />
                 ) : (
-                  <Icon className="h-4 w-4" />
+                  <Icon size={16} strokeWidth={1.5} />
                 )}
               </motion.div>
               <span

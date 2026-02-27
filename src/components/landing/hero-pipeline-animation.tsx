@@ -142,12 +142,12 @@ function PipelineNode({ node }: { node: NodeDef }) {
             gap: 4,
             padding: '4px 8px',
             pointerEvents: 'none',
+            color: TEXT_MUTED,
           }}
         >
           <node.Icon
             size={18}
-            color={TEXT_MUTED}
-            strokeWidth={1.8}
+            strokeWidth={1.5}
             className="pipeline-hero-icon"
           />
           <span

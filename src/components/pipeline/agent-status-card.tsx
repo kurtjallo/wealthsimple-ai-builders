@@ -98,14 +98,8 @@ export function AgentStatusCard({
         <CardHeader className="pb-2 pt-4 px-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className={cn(
-                'flex h-8 w-8 items-center justify-center rounded-lg',
-                status === 'pending' && 'bg-muted text-muted-foreground',
-                status === 'running' && 'bg-primary/10 text-primary',
-                status === 'completed' && 'bg-emerald-50 text-emerald-600',
-                status === 'failed' && 'bg-red-50 text-red-600',
-              )}>
-                <Icon className="h-4 w-4" />
+              <div className="flex h-7 w-7 items-center justify-center rounded-md bg-muted text-muted-foreground">
+                <Icon size={16} strokeWidth={1.5} />
               </div>
               <div>
                 <h3 className="text-sm font-semibold leading-none">{label}</h3>

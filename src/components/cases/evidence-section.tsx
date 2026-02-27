@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Link2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface EvidenceLink {
@@ -21,8 +20,7 @@ export function EvidenceSection({ evidenceLinks }: EvidenceSectionProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Link2 className="h-4 w-4" />
+        <CardTitle className="text-base">
           Evidence Links ({evidenceLinks.length})
         </CardTitle>
       </CardHeader>

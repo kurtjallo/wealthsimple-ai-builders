@@ -39,8 +39,7 @@ export function AgentResultsPanel({ agentRuns }: AgentResultsPanelProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Bot className="h-4 w-4" />
+          <CardTitle className="text-base">
             Agent Results
           </CardTitle>
         </CardHeader>
@@ -56,8 +55,7 @@ export function AgentResultsPanel({ agentRuns }: AgentResultsPanelProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Bot className="h-4 w-4" />
+        <CardTitle className="text-base">
           Agent Results ({agentRuns.length} agents)
         </CardTitle>
       </CardHeader>
@@ -74,12 +72,16 @@ export function AgentResultsPanel({ agentRuns }: AgentResultsPanelProps) {
                 onClick={() => toggleAgent(run.id)}
                 className="flex w-full items-center gap-3 px-6 py-3 text-left hover:bg-muted/50 transition-colors"
               >
-                {isExpanded ? (
-                  <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                ) : (
-                  <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                )}
-                <Icon className="h-4 w-4 flex-shrink-0" />
+                <span className="text-muted-foreground flex-shrink-0">
+                  {isExpanded ? (
+                    <ChevronDown size={16} strokeWidth={1.5} />
+                  ) : (
+                    <ChevronRight size={16} strokeWidth={1.5} />
+                  )}
+                </span>
+                <span className="flex-shrink-0">
+                  <Icon size={16} strokeWidth={1.5} />
+                </span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium">
@@ -134,28 +136,28 @@ function AgentStatusBadge({ status }: { status: string }) {
     case 'completed':
       return (
         <Badge variant="outline" className="gap-1 bg-emerald-50 text-emerald-600 border-emerald-200 text-xs">
-          <CheckCircle2 className="h-3 w-3" />
+          <CheckCircle2 size={16} strokeWidth={1.5} />
           Complete
         </Badge>
       );
     case 'failed':
       return (
         <Badge variant="outline" className="gap-1 bg-red-50 text-red-600 border-red-200 text-xs">
-          <XCircle className="h-3 w-3" />
+          <XCircle size={16} strokeWidth={1.5} />
           Failed
         </Badge>
       );
     case 'running':
       return (
         <Badge variant="outline" className="gap-1 bg-primary/10 text-primary border-primary/20 text-xs">
-          <Loader2 className="h-3 w-3 animate-spin" />
+          <Loader2 size={16} strokeWidth={1.5} className="animate-spin" />
           Running
         </Badge>
       );
     default:
       return (
         <Badge variant="outline" className="gap-1 text-xs">
-          <Clock className="h-3 w-3" />
+          <Clock size={16} strokeWidth={1.5} />
           Pending
         </Badge>
       );

@@ -30,8 +30,8 @@ export function Header({ systemStatus = 'online' }: HeaderProps) {
           </span>
         </div>
 
-        <button className="relative flex h-8 w-8 items-center justify-center rounded-lg hover:bg-accent transition-colors">
-          <Bell className="h-4 w-4 text-muted-foreground" />
+        <button className="relative flex h-8 w-8 items-center justify-center rounded-lg hover:bg-accent transition-colors text-muted-foreground">
+          <Bell size={20} strokeWidth={1.5} />
         </button>
 
         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">

@@ -20,8 +20,6 @@ import {
   XCircle,
   AlertTriangle,
   Loader2,
-  Scale,
-  AlertCircle,
 } from 'lucide-react';
 
 type DecisionType = 'approved' | 'denied' | 'escalated';
@@ -35,7 +33,7 @@ const DECISION_OPTIONS: Array<{
   value: DecisionType;
   label: string;
   description: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>;
   buttonVariant: 'default' | 'destructive' | 'outline';
   confirmClass: string;
   dialogTitle: string;
@@ -139,8 +137,7 @@ export function DecisionWorkflow({ caseId, onDecisionMade }: DecisionWorkflowPro
     <>
       <Card className="border-primary/20">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Scale className="h-4 w-4" />
+          <CardTitle className="text-base">
             Officer Decision
           </CardTitle>
           <CardDescription>
@@ -162,7 +159,7 @@ export function DecisionWorkflow({ caseId, onDecisionMade }: DecisionWorkflowPro
                   )}
                   onClick={() => handleSelectDecision(option.value)}
                 >
-                  <Icon className="h-5 w-5" />
+                  <Icon size={20} strokeWidth={1.5} />
                   <span className="font-medium">{option.label}</span>
                   <span className="text-xs font-normal opacity-70 text-center">
                     {option.description}
@@ -181,7 +178,7 @@ export function DecisionWorkflow({ caseId, onDecisionMade }: DecisionWorkflowPro
             <DialogTitle className="flex items-center gap-2">
               {selectedOption && (
                 <>
-                  <selectedOption.icon className="h-5 w-5" />
+                  <selectedOption.icon size={20} strokeWidth={1.5} />
                   {selectedOption.dialogTitle}
                 </>
               )}
@@ -214,8 +211,8 @@ export function DecisionWorkflow({ caseId, onDecisionMade }: DecisionWorkflowPro
               <p className="mt-1.5 text-xs text-muted-foreground">
                 {justification.trim().length}/{MIN_JUSTIFICATION_LENGTH} minimum characters
                 {justification.trim().length >= MIN_JUSTIFICATION_LENGTH && (
-                  <span className="ml-1 text-emerald-600">
-                    <CheckCircle2 className="inline h-3 w-3" /> Meets minimum
+                  <span className="ml-1 inline-flex items-center gap-0.5 text-emerald-600">
+                    <CheckCircle2 size={16} strokeWidth={1.5} /> Meets minimum
                   </span>
                 )}
               </p>
@@ -223,7 +220,6 @@ export function DecisionWorkflow({ caseId, onDecisionMade }: DecisionWorkflowPro
 
             {error && (
               <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
@@ -247,7 +243,7 @@ export function DecisionWorkflow({ caseId, onDecisionMade }: DecisionWorkflowPro
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 size={16} strokeWidth={1.5} className="animate-spin" />
                   Submitting...
                 </>
               ) : (

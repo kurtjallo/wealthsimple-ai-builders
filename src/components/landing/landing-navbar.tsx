@@ -126,11 +126,12 @@ export function LandingNavbar() {
           href="/"
           className="flex items-center gap-2 transition-opacity hover:opacity-80"
         >
-          <Shield
-            className="size-7"
-            style={{ color: "#f35c1d" }}
-            strokeWidth={2.2}
-          />
+          <span style={{ color: "#f35c1d" }}>
+            <Shield
+              size={20}
+              strokeWidth={1.5}
+            />
+          </span>
           <span
             className="text-xl font-bold tracking-tight"
             style={{ color: "#1A1A1A" }}
@@ -215,15 +216,15 @@ export function LandingNavbar() {
                                   className="group flex items-start gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-[#F3F3F1]"
                                 >
                                   <div
-                                    className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg"
+                                    className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg"
                                     style={{
-                                      backgroundColor: "rgba(243,92,29,0.08)",
+                                      backgroundColor: "rgba(0,0,0,0.04)",
+                                      color: "#6B7280",
                                     }}
                                   >
                                     <item.icon
-                                      className="size-[18px]"
-                                      style={{ color: "#f35c1d" }}
-                                      strokeWidth={1.8}
+                                      size={16}
+                                      strokeWidth={1.5}
                                     />
                                   </div>
                                   <div>
@@ -327,12 +328,13 @@ export function LandingNavbar() {
           type="button"
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
           className="inline-flex size-10 items-center justify-center rounded-lg transition-colors hover:bg-[#F3F3F1] md:hidden"
+          style={{ color: "#1A1A1A" }}
           onClick={() => setMobileOpen((prev) => !prev)}
         >
           {mobileOpen ? (
-            <X className="size-5" style={{ color: "#1A1A1A" }} />
+            <X size={20} strokeWidth={1.5} />
           ) : (
-            <Menu className="size-5" style={{ color: "#1A1A1A" }} />
+            <Menu size={20} strokeWidth={1.5} />
           )}
         </button>
       </nav>
@@ -381,11 +383,11 @@ export function LandingNavbar() {
                     href="#features"
                     onClick={closeMobile}
                     className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-[#F3F3F1]"
+                    style={{ color: "#6B7280" }}
                   >
                     <item.icon
-                      className="size-4 shrink-0"
-                      style={{ color: "#f35c1d" }}
-                      strokeWidth={1.8}
+                      size={16}
+                      strokeWidth={1.5}
                     />
                     <span style={{ color: "#1A1A1A" }}>{item.title}</span>
                   </a>

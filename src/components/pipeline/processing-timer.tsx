@@ -49,17 +49,14 @@ export function ProcessingTimer({ isRunning, className }: ProcessingTimerProps) 
     <motion.div
       className={cn(
         'flex items-center gap-1.5 text-xs font-mono',
-        isRunning ? 'text-primary' : 'text-muted-foreground',
+        'text-muted-foreground',
         className,
       )}
       initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Clock className={cn(
-        'h-3 w-3',
-        isRunning && 'animate-spin [animation-duration:3s]',
-      )} />
+      <Clock size={14} strokeWidth={1.5} />
       <span>{seconds}s</span>
     </motion.div>
   );

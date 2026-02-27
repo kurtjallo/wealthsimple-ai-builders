@@ -78,8 +78,8 @@ function FeatureCard({ feature }: { feature: Feature }) {
       variants={cardVariants}
       className="bg-white border border-[#E5E5E3] rounded-xl p-6 hover:shadow-md transition-shadow duration-300"
     >
-      <div className="w-10 h-10 rounded-lg bg-[#f35c1d]/10 flex items-center justify-center mb-4">
-        <Icon size={20} className="text-[#f35c1d]" />
+      <div className="w-8 h-8 rounded-lg bg-[#1A1A1A]/[0.04] flex items-center justify-center mb-4" style={{ color: "#6B7280" }}>
+        <Icon size={20} strokeWidth={1.5} />
       </div>
       <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">
         {feature.title}

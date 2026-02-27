@@ -8,8 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import {
-  User, FileText, Cpu, CheckCircle2, Loader2, AlertCircle,
-  ArrowRight, ArrowLeft, Play, Eye
+  CheckCircle2, Loader2, AlertCircle,
+  ArrowRight, ArrowLeft,
 } from 'lucide-react';
 import Link from 'next/link';
 import { DocumentUpload } from '@/components/cases/document-upload';
@@ -172,7 +172,7 @@ export default function NewCasePage() {
       actions={
         <Link href="/dashboard/cases">
           <Button variant="outline" size="sm" className="gap-1.5">
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft size={16} strokeWidth={1.5} />
             Back to Queue
           </Button>
         </Link>
@@ -199,10 +199,7 @@ export default function NewCasePage() {
       {step === 'applicant' && (
         <Card>
           <CardHeader>
-            <div className="flex items-center gap-2">
-              <User className="h-5 w-5" />
-              <CardTitle>Applicant Information</CardTitle>
-            </div>
+            <CardTitle>Applicant Information</CardTitle>
             <CardDescription>Enter the applicant details to begin the KYC review.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -229,9 +226,9 @@ export default function NewCasePage() {
               className="w-full"
             >
               {isCreating ? (
-                <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Creating Case...</>
+                <><span className="mr-2"><Loader2 size={16} strokeWidth={1.5} className="animate-spin" /></span> Creating Case...</>
               ) : (
-                <>Create Case <ArrowRight className="h-4 w-4 ml-2" /></>
+                <>Create Case <span className="ml-2"><ArrowRight size={16} strokeWidth={1.5} /></span></>
               )}
             </Button>
           </CardContent>
@@ -242,10 +239,7 @@ export default function NewCasePage() {
       {step === 'documents' && caseId && (
         <Card>
           <CardHeader>
-            <div className="flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              <CardTitle>Upload Documents</CardTitle>
-            </div>
+            <CardTitle>Upload Documents</CardTitle>
             <CardDescription>
               Upload identity documents for {applicantName}. Supported: passport, driver&apos;s license, utility bill, bank statement.
             </CardDescription>
@@ -261,7 +255,6 @@ export default function NewCasePage() {
               className="w-full"
               size="lg"
             >
-              <Play className="h-4 w-4 mr-2" />
               Start AI Processing
             </Button>
           </CardContent>
@@ -272,10 +265,7 @@ export default function NewCasePage() {
       {step === 'processing' && (
         <Card>
           <CardHeader>
-            <div className="flex items-center gap-2">
-              <Cpu className="h-5 w-5 animate-pulse" />
-              <CardTitle>Processing Case</CardTitle>
-            </div>
+            <CardTitle>Processing Case</CardTitle>
             <CardDescription>
               AI agents are analyzing {applicantName}&apos;s documents in parallel...
             </CardDescription>
@@ -285,11 +275,11 @@ export default function NewCasePage() {
               {progressEvents.map((event, i) => (
                 <div key={i} className="flex items-start gap-3">
                   {event.status === 'completed' ? (
-                    <CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" />
+                    <span className="text-emerald-600 mt-0.5 shrink-0"><CheckCircle2 size={16} strokeWidth={1.5} /></span>
                   ) : event.status === 'failed' ? (
-                    <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 shrink-0" />
+                    <span className="text-red-600 mt-0.5 shrink-0"><AlertCircle size={16} strokeWidth={1.5} /></span>
                   ) : (
-                    <Loader2 className="h-4 w-4 animate-spin text-primary mt-0.5 shrink-0" />
+                    <span className="text-primary mt-0.5 shrink-0"><Loader2 size={16} strokeWidth={1.5} className="animate-spin" /></span>
                   )}
                   <div>
                     <p className="text-sm">{event.message}</p>
@@ -304,7 +294,7 @@ export default function NewCasePage() {
               ))}
               {isProcessing && (
                 <div className="flex items-center gap-2 text-muted-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 size={16} strokeWidth={1.5} className="animate-spin" />
                   <span className="text-sm">Agents working...</span>
                 </div>
               )}
@@ -317,10 +307,7 @@ export default function NewCasePage() {
       {step === 'complete' && pipelineResult && (
         <Card className="border-emerald-200">
           <CardHeader className="bg-emerald-50 rounded-t-xl">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-              <CardTitle>Processing Complete</CardTitle>
-            </div>
+            <CardTitle>Processing Complete</CardTitle>
             <CardDescription>
               All AI agents have completed their analysis for {applicantName}.
             </CardDescription>
@@ -348,7 +335,6 @@ export default function NewCasePage() {
               onClick={() => router.push(`/dashboard/cases/${caseId}`)}
               className="w-full"
             >
-              <Eye className="h-4 w-4 mr-2" />
               View Full Risk Profile &amp; Make Decision
             </Button>
           </CardContent>

@@ -79,8 +79,8 @@ export function HowItWorks() {
                   </div>
 
                   {/* Icon */}
-                  <div className="mt-4">
-                    <Icon size={24} className="text-[#1A1A1A]" />
+                  <div className="mt-4" style={{ color: "#9CA3AF" }}>
+                    <Icon size={20} strokeWidth={1.5} />
                   </div>
 
                   {/* Title */}

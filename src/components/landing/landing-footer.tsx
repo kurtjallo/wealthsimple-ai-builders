@@ -44,7 +44,9 @@ export function LandingFooter() {
       <div className="max-w-7xl mx-auto px-6">
         {/* Brand */}
         <div className="flex items-center gap-2">
-          <Shield size={20} className="text-[#f35c1d]" />
+          <span style={{ color: "#f35c1d" }}>
+            <Shield size={20} strokeWidth={1.5} />
+          </span>
           <span className="font-bold text-lg">Sentinel</span>
           <span className="text-sm text-gray-400">
             AI-Powered KYC/AML Operations

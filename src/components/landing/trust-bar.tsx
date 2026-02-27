@@ -44,7 +44,7 @@ export function TrustBar() {
             key={db.name}
             className="flex items-center gap-2 text-sm text-[#6B7280]"
           >
-            <db.icon size={16} />
+            <db.icon size={16} strokeWidth={1.5} />
             <span>{db.name}</span>
             {db.detail && (
               <span className="text-xs text-[#9CA3AF]">{db.detail}</span>

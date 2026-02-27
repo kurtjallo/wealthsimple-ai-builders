@@ -5,7 +5,7 @@ import { RISK_LEVEL_CONFIG } from '@/lib/constants';
 import { getRiskScoreColor } from '@/lib/config/risk';
 import { RiskLevel } from '@/types';
 import { cn } from '@/lib/utils';
-import { ShieldAlert, ShieldCheck, AlertTriangle } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 
 interface RiskFactor {
   factor_name: string;
@@ -33,8 +33,7 @@ export function RiskProfileCard({
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <ShieldAlert className="h-4 w-4" />
+          <CardTitle className="text-base">
             Risk Profile
           </CardTitle>
         </CardHeader>
@@ -48,13 +47,11 @@ export function RiskProfileCard({
   }
 
   const config = RISK_LEVEL_CONFIG[riskLevel];
-  const RiskIcon = riskLevel === 'low' ? ShieldCheck : ShieldAlert;
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
-          <RiskIcon className="h-4 w-4" />
+        <CardTitle className="text-base">
           Risk Profile
         </CardTitle>
       </CardHeader>
@@ -83,7 +80,7 @@ export function RiskProfileCard({
             </Badge>
             {requiresManualReview && (
               <div className="flex items-center gap-1.5 text-sm text-amber-600">
-                <AlertTriangle className="h-3.5 w-3.5" />
+                <AlertTriangle size={16} strokeWidth={1.5} />
                 Manual review required
               </div>
             )}

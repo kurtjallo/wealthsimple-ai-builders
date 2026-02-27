@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { FileText, CheckCircle2, XCircle, AlertTriangle } from 'lucide-react';
+import { CheckCircle2, XCircle, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface CaseNarrativeCardProps {
@@ -19,8 +19,7 @@ export function CaseNarrativeCard({
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <FileText className="h-4 w-4" />
+          <CardTitle className="text-base">
             Case Narrative
           </CardTitle>
         </CardHeader>
@@ -43,8 +42,7 @@ export function CaseNarrativeCard({
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <FileText className="h-4 w-4" />
+          <CardTitle className="text-base">
             Case Narrative
           </CardTitle>
           {recommendedAction && (
@@ -57,7 +55,7 @@ export function CaseNarrativeCard({
                 recommendedAction === 'escalate' && 'bg-purple-50 text-purple-600 border-purple-200',
               )}
             >
-              <ActionIcon className="h-3 w-3" />
+              <ActionIcon size={16} strokeWidth={1.5} />
               AI Recommends: {recommendedAction.charAt(0).toUpperCase() + recommendedAction.slice(1)}
             </Badge>
           )}
