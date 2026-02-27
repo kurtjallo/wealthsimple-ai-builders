@@ -10,8 +10,10 @@
     "test:documents": "tsx scripts/test-document-processing.ts"
   },
   "dependencies": {
+    "@fontsource-variable/dm-sans": "^5.2.8",
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "@fontsource-variable/plus-jakarta-sans": "^5.2.8",
+    "@fontsource-variable/source-serif-4": "^5.2.9",
     "@google/generative-ai": "^0.24.1",
     "@mistralai/mistralai": "^1.14.0",
     "@supabase/supabase-js": "^2.97.0",

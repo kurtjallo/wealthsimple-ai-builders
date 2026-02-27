@@ -126,7 +126,7 @@ export function LandingNavbar() {
           href="/"
           className="flex items-center gap-2 transition-opacity hover:opacity-80"
         >
-          <span style={{ color: "#f35c1d" }}>
+          <span style={{ color: "#2563EB" }}>
             <Shield
               size={20}
               strokeWidth={1.5}
@@ -134,7 +134,7 @@ export function LandingNavbar() {
           </span>
           <span
             className="text-xl font-bold tracking-tight"
-            style={{ color: "#1A1A1A" }}
+            style={{ color: "#1A1A1A", fontFamily: "var(--font-display)" }}
           >
             Sentinel
           </span>
@@ -268,7 +268,7 @@ export function LandingNavbar() {
                               <Link
                                 href="/cases/new"
                                 className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold transition-colors hover:opacity-80"
-                                style={{ color: "#f35c1d" }}
+                                style={{ color: "#2563EB" }}
                               >
                                 Try Demo
                                 <span aria-hidden="true">&rarr;</span>
@@ -313,7 +313,7 @@ export function LandingNavbar() {
             asChild
             className="rounded-lg text-sm font-semibold shadow-sm transition-all hover:shadow-md"
             style={{
-              backgroundColor: "#f35c1d",
+              backgroundColor: "#2563EB",
               color: "#ffffff",
             }}
           >
@@ -413,7 +413,7 @@ export function LandingNavbar() {
                   asChild
                   className="w-full justify-center rounded-lg text-sm font-semibold shadow-sm"
                   style={{
-                    backgroundColor: "#f35c1d",
+                    backgroundColor: "#2563EB",
                     color: "#ffffff",
                   }}
                 >

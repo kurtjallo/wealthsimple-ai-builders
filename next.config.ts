@@ -2,10 +2,22 @@ import type { NextConfig } from "next";
 import { resolve } from "path";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  output: "standalone",
+  poweredByHeader: false,
   reactCompiler: true,
   turbopack: {
     root: resolve("."),
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**.supabase.co",
+      },
+    ],
+  },
+  typescript: {
+    ignoreBuildErrors: false,
   },
 };
 

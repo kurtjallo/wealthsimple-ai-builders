@@ -53,10 +53,11 @@ export function Testimonials() {
       <div className="max-w-7xl mx-auto px-6">
         <motion.h2
           className="text-3xl lg:text-4xl font-extrabold text-[#1A1A1A] text-center mb-16"
-          initial={{ opacity: 0, y: 16 }}
+          style={{ fontFamily: "var(--font-display)" }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
         >
           Trusted by compliance professionals
         </motion.h2>
@@ -65,17 +66,17 @@ export function Testimonials() {
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={testimonial.name}
-              className="break-inside-avoid bg-white rounded-xl p-6 border border-[#E5E5E3]"
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              className="break-inside-avoid bg-white rounded-xl p-6 border border-[#E5E5E3] transition-[shadow,transform] duration-300 ease-out hover:shadow-md hover:translate-y-[-1px]"
+              initial={{ opacity: 0, y: 24, scale: 0.97 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, margin: "-80px" }}
               transition={{
-                duration: 0.5,
-                delay: index * 0.1,
+                duration: 0.6,
+                delay: index * 0.08,
                 ease: "easeOut",
               }}
             >
-              <span className="block text-4xl font-serif text-[#f35c1d]/20 leading-none select-none">
+              <span className="block text-4xl font-serif text-[#2563EB]/20 leading-none select-none">
                 &ldquo;
               </span>
 
