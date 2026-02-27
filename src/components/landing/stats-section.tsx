@@ -44,12 +44,13 @@ interface StatItem {
   label: string;
 }
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
+const statVariants = {
+  hidden: { opacity: 0, y: 30, scale: 0.95 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: "easeOut" as const },
+    scale: 1,
+    transition: { duration: 0.6, ease: "easeOut" as const },
   },
 };
 
@@ -57,23 +58,38 @@ const containerVariants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.15,
+      staggerChildren: 0.1,
     },
   },
 };
 
 export function StatsSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-80px" });
-
   const stats: StatItem[] = [
     {
       id: "processing-time",
       renderValue: (
         <span>
-          <AnimatedNumber value={5} /> days{" "}
-          <span className="text-[#f35c1d]">&rarr;</span>{" "}
-          <AnimatedNumber value={3} /> min
+          <span className="text-5xl lg:text-6xl">
+            <AnimatedNumber value={5} />
+          </span>
+          <span className="text-2xl lg:text-3xl font-normal text-[#4B5563]">
+            {" "}
+            days{" "}
+          </span>
+          <span
+            className="text-3xl lg:text-4xl text-[#2563EB]"
+            style={{ fontFamily: "var(--font-sans)" }}
+          >
+            &rarr;
+          </span>
+          <span className="text-5xl lg:text-6xl">
+            {" "}
+            <AnimatedNumber value={3} />
+          </span>
+          <span className="text-2xl lg:text-3xl font-normal text-[#4B5563]">
+            {" "}
+            min
+          </span>
         </span>
       ),
       label: "Processing time",
@@ -82,7 +98,13 @@ export function StatsSection() {
       id: "agents",
       renderValue: (
         <span>
-          <AnimatedNumber value={5} /> Agents
+          <span className="text-5xl lg:text-6xl">
+            <AnimatedNumber value={5} />
+          </span>
+          <span className="text-2xl lg:text-3xl font-normal text-[#4B5563]">
+            {" "}
+            Agents
+          </span>
         </span>
       ),
       label: "Working in parallel",
@@ -91,7 +113,13 @@ export function StatsSection() {
       id: "lists",
       renderValue: (
         <span>
-          <AnimatedNumber value={3} /> Lists
+          <span className="text-5xl lg:text-6xl">
+            <AnimatedNumber value={3} />
+          </span>
+          <span className="text-2xl lg:text-3xl font-normal text-[#4B5563]">
+            {" "}
+            Lists
+          </span>
         </span>
       ),
       label: "OFAC + UN + PEP",
@@ -99,7 +127,7 @@ export function StatsSection() {
     {
       id: "auditable",
       renderValue: (
-        <span>
+        <span className="text-5xl lg:text-6xl">
           <AnimatedNumber value={100} suffix="%" />
         </span>
       ),
@@ -108,31 +136,28 @@ export function StatsSection() {
   ];
 
   return (
-    <section ref={sectionRef} className="bg-white py-24">
+    <section className="bg-white py-24 border-t border-[#E2E8F0]">
       <motion.div
         className="max-w-7xl mx-auto px-6"
         variants={containerVariants}
         initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
+        whileInView="visible"
+        viewport={{ once: true, margin: "-80px" }}
       >
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
           {stats.map((stat) => (
             <motion.div
               key={stat.id}
-              variants={cardVariants}
+              variants={statVariants}
               className="flex flex-col items-center"
             >
               <div
-                className="font-mono text-4xl lg:text-5xl font-bold text-[#1A1A1A]"
-                style={{
-                  animation: isInView
-                    ? "count-pulse 0.4s ease-out 2s 1"
-                    : "none",
-                }}
+                className="text-5xl lg:text-6xl font-semibold tracking-tight text-[#1A1A1A]"
+                style={{ fontFamily: "var(--font-display)" }}
               >
                 {stat.renderValue}
               </div>
-              <p className="text-sm text-[#6B7280] mt-2">{stat.label}</p>
+              <p className="text-base text-[#6B7280] mt-3">{stat.label}</p>
             </motion.div>
           ))}
         </div>

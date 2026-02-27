@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
+const mantleEase = [0.25, 0.1, 0.25, 1] as const;
+
 interface Feature {
   icon: LucideIcon;
   title: string;
@@ -61,24 +63,33 @@ const containerVariants = {
   },
 };
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: "easeOut" as const },
-  },
-};
+function createCardVariants(index: number) {
+  const isOdd = index % 2 === 0; // 0-indexed: first, third = left; second, fourth = right
+  return {
+    hidden: { opacity: 0, y: 20, x: isOdd ? -12 : 12, scale: 0.97 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      x: 0,
+      scale: 1,
+      transition: { duration: 0.6, ease: mantleEase },
+    },
+  };
+}
 
-function FeatureCard({ feature }: { feature: Feature }) {
+function FeatureCard({ feature, index }: { feature: Feature; index: number }) {
   const Icon = feature.icon;
+  const variants = createCardVariants(index);
 
   return (
     <motion.div
-      variants={cardVariants}
-      className="bg-white border border-[#E5E5E3] rounded-xl p-6 hover:shadow-md transition-shadow duration-300"
+      variants={variants}
+      className="bg-white border border-[#E5E5E3] rounded-xl p-6 hover:shadow-md hover:-translate-y-[2px] transition-all duration-300 ease-out"
     >
-      <div className="w-8 h-8 rounded-lg bg-[#1A1A1A]/[0.04] flex items-center justify-center mb-4" style={{ color: "#6B7280" }}>
+      <div
+        className="w-8 h-8 rounded-lg bg-[#2563EB]/[0.06] flex items-center justify-center mb-4"
+        style={{ color: "#2563EB" }}
+      >
         <Icon size={20} strokeWidth={1.5} />
       </div>
       <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">
@@ -91,34 +102,60 @@ function FeatureCard({ feature }: { feature: Feature }) {
   );
 }
 
+const headingVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.6, ease: mantleEase },
+  },
+};
+
+const subtextVariants = {
+  hidden: { opacity: 0, x: -12 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.6, delay: 0.12, ease: mantleEase },
+  },
+};
+
 export function FeaturesGrid() {
   return (
     <section id="features" className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          viewport={{ once: true, margin: "-50px" }}
-        >
-          <h2 className="text-3xl lg:text-4xl font-extrabold text-[#1A1A1A] text-center">
+        <div>
+          <motion.h2
+            className="text-3xl lg:text-4xl font-extrabold text-[#1A1A1A] text-center"
+            style={{ fontFamily: "var(--font-display)" }}
+            initial="hidden"
+            whileInView="visible"
+            variants={headingVariants}
+            viewport={{ once: true, margin: "-80px" }}
+          >
             Built for modern compliance teams
-          </h2>
-          <p className="text-lg text-[#6B7280] text-center mt-4 max-w-2xl mx-auto">
+          </motion.h2>
+          <motion.p
+            className="text-lg text-[#6B7280] text-center mt-4 max-w-2xl mx-auto"
+            initial="hidden"
+            whileInView="visible"
+            variants={subtextVariants}
+            viewport={{ once: true, margin: "-80px" }}
+          >
             Five specialized AI agents work in parallel to deliver comprehensive
             risk assessments.
-          </p>
-        </motion.div>
+          </motion.p>
+        </div>
 
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
+          viewport={{ once: true, margin: "-80px" }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16"
         >
-          {topFeatures.map((feature) => (
-            <FeatureCard key={feature.title} feature={feature} />
+          {topFeatures.map((feature, i) => (
+            <FeatureCard key={feature.title} feature={feature} index={i} />
           ))}
         </motion.div>
 
@@ -126,11 +163,11 @@ export function FeaturesGrid() {
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
+          viewport={{ once: true, margin: "-80px" }}
           className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 max-w-4xl mx-auto"
         >
-          {bottomFeatures.map((feature) => (
-            <FeatureCard key={feature.title} feature={feature} />
+          {bottomFeatures.map((feature, i) => (
+            <FeatureCard key={feature.title} feature={feature} index={i} />
           ))}
         </motion.div>
       </div>

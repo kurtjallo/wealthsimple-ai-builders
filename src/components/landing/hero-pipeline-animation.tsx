@@ -1,171 +1,323 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { FileSearch, UserCheck, ShieldAlert, BarChart3, FileText } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
 
 // ---------------------------------------------------------------------------
-// Layout constants
+// Design tokens
 // ---------------------------------------------------------------------------
 
-const VB_W = 600;
-const VB_H = 400;
-
-const ORANGE = '#f35c1d';
-const BORDER_INACTIVE = '#E5E5E3';
+const BLUE = '#2563EB';
+const GOLD = '#C4A962';
+const CARD_BG = '#FFFFFF';
+const BORDER_INACTIVE = '#E2E8F0';
 const TEXT_PRIMARY = '#1A1A1A';
 const TEXT_MUTED = '#6B7280';
-const NODE_BG = '#FFFFFF';
+const GREEN = '#22C55E';
+const AMBER = '#F59E0B';
+const BG = '#F8FAFC';
 
-// Node dimensions
-const NW = 146;
-const NH = 62;
-const R = 12; // border-radius
+// ---------------------------------------------------------------------------
+// ViewBox & card layout
+// ---------------------------------------------------------------------------
 
-// Node positions (x, y are center-points)
-interface NodeDef {
+const VB_W = 800;
+const VB_H = 380;
+const CW = 120;
+const CH = 90;
+const CR = 8;
+const GOLD_BAR_H = 4;
+const CYCLE = 12; // seconds
+
+// Card positions (top-left corner)
+// [Doc] → fork → [Identity] + [Sanctions] → join → [Risk] → [Narrative]
+const POS = {
+  doc:       { x: 30,  y: 145 },
+  identity:  { x: 225, y: 38  },
+  sanctions: { x: 225, y: 252 },
+  risk:      { x: 435, y: 145 },
+  narrative: { x: 630, y: 145 },
+};
+
+const MID_Y = POS.doc.y + CH / 2; // 190
+
+// Edge-midpoint anchors for connections
+const A = {
+  docR:  { x: POS.doc.x + CW,       y: MID_Y },
+  idL:   { x: POS.identity.x,       y: POS.identity.y + CH / 2 },
+  idR:   { x: POS.identity.x + CW,  y: POS.identity.y + CH / 2 },
+  sanL:  { x: POS.sanctions.x,      y: POS.sanctions.y + CH / 2 },
+  sanR:  { x: POS.sanctions.x + CW, y: POS.sanctions.y + CH / 2 },
+  riskL: { x: POS.risk.x,           y: MID_Y },
+  riskR: { x: POS.risk.x + CW,      y: MID_Y },
+  narL:  { x: POS.narrative.x,      y: MID_Y },
+};
+
+// Cubic bezier paths
+const PATH = {
+  forkUp:   `M ${A.docR.x} ${A.docR.y} C ${A.docR.x + 42} ${A.docR.y}, ${A.idL.x - 42} ${A.idL.y}, ${A.idL.x} ${A.idL.y}`,
+  forkDown: `M ${A.docR.x} ${A.docR.y} C ${A.docR.x + 42} ${A.docR.y}, ${A.sanL.x - 42} ${A.sanL.y}, ${A.sanL.x} ${A.sanL.y}`,
+  joinUp:   `M ${A.idR.x} ${A.idR.y} C ${A.idR.x + 42} ${A.idR.y}, ${A.riskL.x - 42} ${A.riskL.y}, ${A.riskL.x} ${A.riskL.y}`,
+  joinDown: `M ${A.sanR.x} ${A.sanR.y} C ${A.sanR.x + 42} ${A.sanR.y}, ${A.riskL.x - 42} ${A.riskL.y}, ${A.riskL.x} ${A.riskL.y}`,
+  final:    `M ${A.riskR.x} ${A.riskR.y} C ${A.riskR.x + 32} ${A.riskR.y}, ${A.narL.x - 32} ${A.narL.y}, ${A.narL.x} ${A.narL.y}`,
+};
+
+// All paths as array for rendering
+const ALL_PATHS = [
+  { id: 'fork-up',   d: PATH.forkUp,   group: 'fork' },
+  { id: 'fork-down', d: PATH.forkDown, group: 'fork' },
+  { id: 'join-up',   d: PATH.joinUp,   group: 'join' },
+  { id: 'join-down', d: PATH.joinDown, group: 'join' },
+  { id: 'final',     d: PATH.final,    group: 'final' },
+];
+
+// Pill labels on connections
+const PILLS = [
+  { label: 'Verify',  x: (A.docR.x + A.idL.x) / 2,  y: (A.docR.y + A.idL.y) / 2 - 14,  group: 'fork' },
+  { label: 'Screen',  x: (A.docR.x + A.sanL.x) / 2,  y: (A.docR.y + A.sanL.y) / 2 + 14,  group: 'fork' },
+  { label: 'Score',   x: (A.idR.x + A.riskL.x) / 2,  y: MID_Y - 16,                       group: 'join' },
+  { label: 'Narrate', x: (A.riskR.x + A.narL.x) / 2, y: MID_Y - 14,                       group: 'final' },
+];
+
+// Endpoint dots (deduplicated shared anchors)
+const ENDPOINTS = [
+  { ...A.docR,  group: 'fork' },
+  { ...A.idL,   group: 'fork' },
+  { ...A.sanL,  group: 'fork' },
+  { ...A.idR,   group: 'join' },
+  { ...A.sanR,  group: 'join' },
+  { ...A.riskL, group: 'join' },
+  { ...A.riskR, group: 'final' },
+  { ...A.narL,  group: 'final' },
+];
+
+// ---------------------------------------------------------------------------
+// Card data
+// ---------------------------------------------------------------------------
+
+interface CardData {
   id: string;
-  label: string;
-  Icon: LucideIcon;
-  cx: number;
-  cy: number;
-  /** When this node activates (seconds into cycle) */
+  code: string;
+  type: string;
+  owner: string;
+  statusLabel: string;
+  statusColor: string;
+  metricLabel: string;
+  metricValue: string;
+  pos: { x: number; y: number };
   activeStart: number;
-  /** When this node deactivates (seconds into cycle) */
   activeEnd: number;
 }
 
-const NODES: NodeDef[] = [
-  { id: 'doc',       label: 'Document Processing',    Icon: FileSearch,  cx: 80,  cy: 200, activeStart: 0,   activeEnd: 2 },
-  { id: 'identity',  label: 'Identity Verification',  Icon: UserCheck,   cx: 260, cy: 120, activeStart: 2,   activeEnd: 5 },
-  { id: 'sanctions', label: 'Sanctions Screening',     Icon: ShieldAlert, cx: 260, cy: 280, activeStart: 2,   activeEnd: 5 },
-  { id: 'risk',      label: 'Risk Scoring',            Icon: BarChart3,   cx: 440, cy: 200, activeStart: 5,   activeEnd: 7 },
-  { id: 'narrative', label: 'Case Narrative',           Icon: FileText,    cx: 560, cy: 200, activeStart: 7,   activeEnd: 9 },
-];
-
-// Connecting paths (from center of source to center of target)
-interface PathDef {
-  from: string;
-  to: string;
-  d: string;
-  /** When the flow animation starts */
-  flowStart: number;
-}
-
-// Build curved SVG paths
-const PATHS: PathDef[] = [
-  // Doc -> Identity (fork up)
+const CARDS: CardData[] = [
   {
-    from: 'doc',
-    to: 'identity',
-    d: `M ${80 + NW / 2} 200 C ${170} 200, ${190} 120, ${260 - NW / 2} 120`,
-    flowStart: 1.5,
+    id: 'doc', code: 'KYC-1', type: 'Documents', owner: 'Applicant Review',
+    statusLabel: 'Processing', statusColor: AMBER,
+    metricLabel: 'Files', metricValue: '3',
+    pos: POS.doc, activeStart: 0, activeEnd: 2.5,
   },
-  // Doc -> Sanctions (fork down)
   {
-    from: 'doc',
-    to: 'sanctions',
-    d: `M ${80 + NW / 2} 200 C ${170} 200, ${190} 280, ${260 - NW / 2} 280`,
-    flowStart: 1.5,
+    id: 'identity', code: 'KYC-2', type: 'Identity', owner: 'Sean Holland',
+    statusLabel: 'Verified', statusColor: GREEN,
+    metricLabel: 'Confidence', metricValue: '94%',
+    pos: POS.identity, activeStart: 2.5, activeEnd: 5.5,
   },
-  // Identity -> Risk (join up)
   {
-    from: 'identity',
-    to: 'risk',
-    d: `M ${260 + NW / 2} 120 C ${350} 120, ${370} 200, ${440 - NW / 2} 200`,
-    flowStart: 4.5,
+    id: 'sanctions', code: 'KYC-3', type: 'Screening', owner: 'Compliance Check',
+    statusLabel: 'Clear', statusColor: GREEN,
+    metricLabel: 'Matches', metricValue: '0',
+    pos: POS.sanctions, activeStart: 2.5, activeEnd: 5.5,
   },
-  // Sanctions -> Risk (join down)
   {
-    from: 'sanctions',
-    to: 'risk',
-    d: `M ${260 + NW / 2} 280 C ${350} 280, ${370} 200, ${440 - NW / 2} 200`,
-    flowStart: 4.5,
+    id: 'risk', code: 'KYC-4', type: 'Risk', owner: 'Risk Engine',
+    statusLabel: 'Low Risk', statusColor: GREEN,
+    metricLabel: 'Score', metricValue: '12',
+    pos: POS.risk, activeStart: 5.5, activeEnd: 8,
   },
-  // Risk -> Narrative
   {
-    from: 'risk',
-    to: 'narrative',
-    d: `M ${440 + NW / 2} 200 L ${560 - NW / 2} 200`,
-    flowStart: 6.5,
+    id: 'narrative', code: 'KYC-5', type: 'Narrative', owner: 'Case Summary',
+    statusLabel: 'Generated', statusColor: GREEN,
+    metricLabel: 'Sections', metricValue: '4',
+    pos: POS.narrative, activeStart: 8, activeEnd: 10,
   },
 ];
 
-const CYCLE_DURATION = 10; // seconds
-
 // ---------------------------------------------------------------------------
-// A single pipeline node
+// CSS animation keyframes
 // ---------------------------------------------------------------------------
 
-function PipelineNode({ node }: { node: NodeDef }) {
-  const x = node.cx - NW / 2;
-  const y = node.cy - NH / 2;
+function buildCSS(): string {
+  // Background grid
+  const grid = `
+    .hero-grid-line { stroke: ${BORDER_INACTIVE}; stroke-width: 0.5; opacity: 0.4; }
+  `;
 
-  return (
-    <g className="pipeline-hero-node">
-      {/* Glow layer (behind the rect) */}
-      <rect
-        x={x - 3}
-        y={y - 3}
-        width={NW + 6}
-        height={NH + 6}
-        rx={R + 2}
-        ry={R + 2}
-        fill="none"
-        className="pipeline-hero-glow"
-      />
+  // Connection line draw-in (3 groups: fork 12.5-25%, join 37.5-50%, final 58-71%)
+  const connections = `
+    .hero-conn-fork {
+      stroke-dasharray: 500; stroke-dashoffset: 500;
+      animation: hero-draw-fork ${CYCLE}s ease infinite;
+    }
+    @keyframes hero-draw-fork {
+      0%, 12.5% { stroke-dashoffset: 500; }
+      25% { stroke-dashoffset: 0; }
+      83% { stroke-dashoffset: 0; }
+      93% { stroke-dashoffset: 500; }
+      100% { stroke-dashoffset: 500; }
+    }
+    .hero-conn-join {
+      stroke-dasharray: 500; stroke-dashoffset: 500;
+      animation: hero-draw-join ${CYCLE}s ease infinite;
+    }
+    @keyframes hero-draw-join {
+      0%, 37.5% { stroke-dashoffset: 500; }
+      50% { stroke-dashoffset: 0; }
+      83% { stroke-dashoffset: 0; }
+      93% { stroke-dashoffset: 500; }
+      100% { stroke-dashoffset: 500; }
+    }
+    .hero-conn-final {
+      stroke-dasharray: 500; stroke-dashoffset: 500;
+      animation: hero-draw-final ${CYCLE}s ease infinite;
+    }
+    @keyframes hero-draw-final {
+      0%, 58% { stroke-dashoffset: 500; }
+      71% { stroke-dashoffset: 0; }
+      83% { stroke-dashoffset: 0; }
+      93% { stroke-dashoffset: 500; }
+      100% { stroke-dashoffset: 500; }
+    }
+  `;
 
-      {/* Main rounded rect */}
-      <rect
-        x={x}
-        y={y}
-        width={NW}
-        height={NH}
-        rx={R}
-        ry={R}
-        fill={NODE_BG}
-        className="pipeline-hero-rect"
-        stroke={BORDER_INACTIVE}
-        strokeWidth={1.5}
-      />
+  // Endpoint dots (appear with their connection group)
+  const endpoints = `
+    .hero-ep-fork { opacity: 0; animation: hero-ep-fork-a ${CYCLE}s ease infinite; }
+    @keyframes hero-ep-fork-a {
+      0%, 18% { opacity: 0; } 25% { opacity: 1; } 83% { opacity: 1; } 93% { opacity: 0; } 100% { opacity: 0; }
+    }
+    .hero-ep-join { opacity: 0; animation: hero-ep-join-a ${CYCLE}s ease infinite; }
+    @keyframes hero-ep-join-a {
+      0%, 43% { opacity: 0; } 50% { opacity: 1; } 83% { opacity: 1; } 93% { opacity: 0; } 100% { opacity: 0; }
+    }
+    .hero-ep-final { opacity: 0; animation: hero-ep-final-a ${CYCLE}s ease infinite; }
+    @keyframes hero-ep-final-a {
+      0%, 63% { opacity: 0; } 71% { opacity: 1; } 83% { opacity: 1; } 93% { opacity: 0; } 100% { opacity: 0; }
+    }
+  `;
 
-      {/* Icon + label via foreignObject for crisp React rendering */}
-      <foreignObject x={x} y={y} width={NW} height={NH}>
-        <div
-          style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 4,
-            padding: '4px 8px',
-            pointerEvents: 'none',
-            color: TEXT_MUTED,
-          }}
-        >
-          <node.Icon
-            size={18}
-            strokeWidth={1.5}
-            className="pipeline-hero-icon"
-          />
-          <span
-            style={{
-              fontSize: 11,
-              fontWeight: 600,
-              color: TEXT_PRIMARY,
-              textAlign: 'center',
-              lineHeight: 1.2,
-              letterSpacing: '-0.01em',
-            }}
-          >
-            {node.label}
-          </span>
-        </div>
-      </foreignObject>
-    </g>
-  );
+  // Particle dots flowing along paths (2 per path, staggered)
+  const ptclGroups = [
+    { ids: ['fork-up', 'fork-down'], paths: [PATH.forkUp, PATH.forkDown], kf: 'hero-ptcl-fork-kf', s: 14, e: 30 },
+    { ids: ['join-up', 'join-down'], paths: [PATH.joinUp, PATH.joinDown], kf: 'hero-ptcl-join-kf', s: 39, e: 55 },
+    { ids: ['final'],                paths: [PATH.final],                  kf: 'hero-ptcl-final-kf', s: 60, e: 76 },
+  ];
+
+  let particles = '';
+  for (const pg of ptclGroups) {
+    particles += `
+      @keyframes ${pg.kf} {
+        0%, ${pg.s}% { offset-distance: 0%; opacity: 0; }
+        ${pg.s + 1}% { opacity: 1; }
+        ${pg.e - 1}% { opacity: 1; }
+        ${pg.e}% { offset-distance: 100%; opacity: 0; }
+        100% { offset-distance: 100%; opacity: 0; }
+      }
+    `;
+    for (let pi = 0; pi < pg.ids.length; pi++) {
+      for (let j = 0; j < 2; j++) {
+        particles += `
+          .hero-ptcl-${pg.ids[pi]}-${j} {
+            offset-path: path('${pg.paths[pi]}');
+            animation: ${pg.kf} ${CYCLE}s ease-in-out ${j * 0.35}s infinite;
+            opacity: 0;
+          }
+        `;
+      }
+    }
+  }
+
+  // Pill labels (appear after their connection group draws)
+  const pills = `
+    .hero-pill-fork { opacity: 0; animation: hero-pill-fork-a ${CYCLE}s ease infinite; }
+    @keyframes hero-pill-fork-a {
+      0%, 20% { opacity: 0; transform: scale(0.9); }
+      26% { opacity: 1; transform: scale(1); }
+      83% { opacity: 1; transform: scale(1); }
+      91% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 0; transform: scale(0.9); }
+    }
+    .hero-pill-join { opacity: 0; animation: hero-pill-join-a ${CYCLE}s ease infinite; }
+    @keyframes hero-pill-join-a {
+      0%, 44% { opacity: 0; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1); }
+      83% { opacity: 1; transform: scale(1); }
+      91% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 0; transform: scale(0.9); }
+    }
+    .hero-pill-final { opacity: 0; animation: hero-pill-final-a ${CYCLE}s ease infinite; }
+    @keyframes hero-pill-final-a {
+      0%, 64% { opacity: 0; transform: scale(0.9); }
+      71% { opacity: 1; transform: scale(1); }
+      83% { opacity: 1; transform: scale(1); }
+      91% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 0; transform: scale(0.9); }
+    }
+  `;
+
+  // Per-card activation cycle
+  const cardCSS = CARDS.map((c) => {
+    const s = (c.activeStart / CYCLE) * 100;
+    const fadeIn = ((c.activeStart + 0.4) / CYCLE) * 100;
+    const holdEnd = ((c.activeEnd - 0.4) / CYCLE) * 100;
+    const e = (c.activeEnd / CYCLE) * 100;
+    const compS = (10.2 / CYCLE) * 100;
+    const compE = (10.8 / CYCLE) * 100;
+
+    return `
+      .hero-cg-${c.id} { animation: hero-ca-${c.id} ${CYCLE}s ease infinite; }
+      @keyframes hero-ca-${c.id} {
+        0%, ${Math.max(s - 1, 0)}% { opacity: 0.5; transform: scale(0.97); }
+        ${fadeIn}% { opacity: 1; transform: scale(1); }
+        ${holdEnd}% { opacity: 1; transform: scale(1); }
+        ${e}% { opacity: 0.7; transform: scale(1); }
+        ${compS}% { opacity: 0.85; }
+        ${compE}% { opacity: 1; }
+        93% { opacity: 0.5; transform: scale(0.97); }
+        100% { opacity: 0.5; transform: scale(0.97); }
+      }
+      .hero-cb-${c.id} { animation: hero-bdr-${c.id} ${CYCLE}s ease infinite; }
+      @keyframes hero-bdr-${c.id} {
+        0%, ${Math.max(s - 1, 0)}% { stroke: ${BORDER_INACTIVE}; stroke-width: 1; }
+        ${fadeIn}% { stroke: ${BLUE}; stroke-width: 1.5; }
+        ${holdEnd}% { stroke: ${BLUE}; stroke-width: 1.5; }
+        ${e}% { stroke: ${BORDER_INACTIVE}; stroke-width: 1; }
+        ${compS}% { stroke: ${BORDER_INACTIVE}; }
+        ${compE}% { stroke: ${BLUE}; stroke-width: 1.2; }
+        ${Math.min(compE + 2, 100)}% { stroke: ${BORDER_INACTIVE}; stroke-width: 1; }
+        100% { stroke: ${BORDER_INACTIVE}; stroke-width: 1; }
+      }
+      .hero-cgl-${c.id} { animation: hero-gl-${c.id} ${CYCLE}s ease infinite; }
+      @keyframes hero-gl-${c.id} {
+        0%, ${Math.max(s - 1, 0)}% { opacity: 0; }
+        ${fadeIn}% { opacity: 1; }
+        ${holdEnd}% { opacity: 0.8; }
+        ${e}% { opacity: 0; }
+        100% { opacity: 0; }
+      }
+      .hero-sd-${c.id} { animation: hero-sd-a-${c.id} ${CYCLE}s ease infinite; }
+      @keyframes hero-sd-a-${c.id} {
+        0%, ${Math.max(s - 1, 0)}% { r: 3.5; opacity: 0.6; }
+        ${fadeIn}% { r: 4.5; opacity: 1; }
+        ${((c.activeStart + 1) / CYCLE) * 100}% { r: 3.5; opacity: 1; }
+        ${((c.activeStart + 1.4) / CYCLE) * 100}% { r: 4.5; opacity: 1; }
+        ${((c.activeStart + 1.8) / CYCLE) * 100}% { r: 3.5; opacity: 1; }
+        ${holdEnd}% { r: 3.5; opacity: 1; }
+        ${e}% { r: 3.5; opacity: 0.6; }
+        100% { r: 3.5; opacity: 0.6; }
+      }
+    `;
+  }).join('');
+
+  return grid + connections + endpoints + particles + pills + cardCSS;
 }
 
 // ---------------------------------------------------------------------------
@@ -175,8 +327,8 @@ function PipelineNode({ node }: { node: NodeDef }) {
 export function HeroPipelineAnimation() {
   return (
     <motion.div
-      className="w-full max-w-[600px] mx-auto"
-      initial={{ opacity: 0, scale: 0.92 }}
+      className="w-full max-w-[800px] mx-auto"
+      initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
     >
@@ -185,16 +337,16 @@ export function HeroPipelineAnimation() {
         className="w-full h-auto"
         xmlns="http://www.w3.org/2000/svg"
         role="img"
-        aria-label="AI pipeline visualization showing document processing, identity verification, sanctions screening, risk scoring, and case narrative generation"
+        aria-label="KYC pipeline: document processing forks to identity verification and sanctions screening, joins into risk scoring, then case narrative generation"
       >
         <defs>
-          {/* Glow filter for active nodes */}
-          <filter id="hero-glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+          {/* Glow filter for active cards */}
+          <filter id="hero-card-glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
             <feColorMatrix
               in="blur"
               type="matrix"
-              values="0 0 0 0 0.953  0 0 0 0 0.361  0 0 0 0 0.114  0 0 0 0.35 0"
+              values="0 0 0 0 0.145  0 0 0 0 0.388  0 0 0 0 0.922  0 0 0 0.25 0"
             />
             <feMerge>
               <feMergeNode />
@@ -202,276 +354,230 @@ export function HeroPipelineAnimation() {
             </feMerge>
           </filter>
 
-          {/* Re-usable path definitions for offset-path particles */}
-          {PATHS.map((p, i) => (
-            <path key={i} id={`hero-path-${i}`} d={p.d} fill="none" />
-          ))}
+          {/* Card drop shadow */}
+          <filter id="hero-card-shadow" x="-5%" y="-5%" width="110%" height="120%">
+            <feDropShadow dx="0" dy="1" stdDeviation="2" floodColor="#000000" floodOpacity="0.08" />
+          </filter>
 
-          {/* Animated dash pattern for connecting lines */}
-          <style>{`
-            /* --------------------------------------------------------- */
-            /* Connecting path dash animation                            */
-            /* --------------------------------------------------------- */
-            .hero-connect-path {
-              stroke-dasharray: 6 4;
-              animation: hero-pipeline-flow ${CYCLE_DURATION}s linear infinite;
-            }
-            @keyframes hero-pipeline-flow {
-              to { stroke-dashoffset: -100; }
-            }
+          {/* Gold shimmer gradient for top bars */}
+          <linearGradient id="hero-gold-shimmer" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor={GOLD} stopOpacity="1" />
+            <stop offset="40%" stopColor={GOLD} stopOpacity="1" />
+            <stop offset="50%" stopColor="#E8D5A0" stopOpacity="1" />
+            <stop offset="60%" stopColor={GOLD} stopOpacity="1" />
+            <stop offset="100%" stopColor={GOLD} stopOpacity="1" />
+            <animateTransform
+              attributeName="gradientTransform"
+              type="translate"
+              values="-1 0; 2 0; -1 0"
+              dur={`${CYCLE}s`}
+              repeatCount="indefinite"
+            />
+          </linearGradient>
 
-            /* --------------------------------------------------------- */
-            /* Particle dots flowing along paths                         */
-            /* --------------------------------------------------------- */
-            .hero-particle {
-              opacity: 0;
-            }
-            ${PATHS.map(
-              (p, i) => `
-              .hero-particle-${i}-0 {
-                offset-path: path('${p.d}');
-                animation: hero-particle-travel 2s ease-in-out ${p.flowStart}s infinite;
-                animation-duration: ${CYCLE_DURATION}s;
-              }
-              .hero-particle-${i}-1 {
-                offset-path: path('${p.d}');
-                animation: hero-particle-travel 2s ease-in-out ${p.flowStart + 0.3}s infinite;
-                animation-duration: ${CYCLE_DURATION}s;
-              }
-              .hero-particle-${i}-2 {
-                offset-path: path('${p.d}');
-                animation: hero-particle-travel 2s ease-in-out ${p.flowStart + 0.6}s infinite;
-                animation-duration: ${CYCLE_DURATION}s;
-              }
-            `,
-            ).join('')}
-
-            @keyframes hero-particle-travel {
-              0% {
-                offset-distance: 0%;
-                opacity: 0;
-              }
-              2% {
-                opacity: 1;
-              }
-              18% {
-                opacity: 1;
-              }
-              20% {
-                offset-distance: 100%;
-                opacity: 0;
-              }
-              100% {
-                offset-distance: 100%;
-                opacity: 0;
-              }
-            }
-
-            /* --------------------------------------------------------- */
-            /* Node activation cycle                                     */
-            /* --------------------------------------------------------- */
-            .pipeline-hero-node {
-              opacity: 0.55;
-            }
-
-            .pipeline-hero-glow {
-              opacity: 0;
-              stroke: ${ORANGE};
-              stroke-width: 0;
-              filter: url(#hero-glow);
-            }
-
-            .pipeline-hero-rect {
-              transition: stroke 0.3s ease, stroke-width 0.3s ease;
-            }
-
-            .pipeline-hero-icon {
-              transition: color 0.3s ease;
-            }
-
-            /* Per-node activation using animation-delay */
-            ${NODES.map(
-              (n) => {
-                // Calculate keyframe percentages for this node's active window
-                const startPct = (n.activeStart / CYCLE_DURATION) * 100;
-                const peakPct = ((n.activeStart + 0.3) / CYCLE_DURATION) * 100;
-                const holdPct = ((n.activeEnd - 0.3) / CYCLE_DURATION) * 100;
-                const endPct = (n.activeEnd / CYCLE_DURATION) * 100;
-                // Keep "complete" state briefly at end of cycle
-                const completeStartPct = (9 / CYCLE_DURATION) * 100;
-                const completeEndPct = (9.8 / CYCLE_DURATION) * 100;
-
-                return `
-                  /* --- ${n.label} --- */
-                  .pipeline-hero-node-${n.id} {
-                    animation: hero-activate-${n.id} ${CYCLE_DURATION}s ease infinite;
-                  }
-                  .pipeline-hero-node-${n.id} .pipeline-hero-rect {
-                    animation: hero-rect-${n.id} ${CYCLE_DURATION}s ease infinite;
-                  }
-                  .pipeline-hero-node-${n.id} .pipeline-hero-glow {
-                    animation: hero-glow-${n.id} ${CYCLE_DURATION}s ease infinite;
-                  }
-
-                  @keyframes hero-activate-${n.id} {
-                    0%, ${Math.max(startPct - 1, 0)}% { opacity: 0.55; transform: scale(1); }
-                    ${startPct}% { opacity: 0.55; transform: scale(1); }
-                    ${peakPct}% { opacity: 1; transform: scale(1.02); }
-                    ${holdPct}% { opacity: 1; transform: scale(1); }
-                    ${endPct}% { opacity: 0.7; transform: scale(1); }
-                    ${completeStartPct}% { opacity: 0.85; transform: scale(1); }
-                    ${completeEndPct}% { opacity: 1; transform: scale(1.01); }
-                    100% { opacity: 0.55; transform: scale(1); }
-                  }
-
-                  @keyframes hero-rect-${n.id} {
-                    0%, ${Math.max(startPct - 1, 0)}% { stroke: ${BORDER_INACTIVE}; stroke-width: 1.5; }
-                    ${peakPct}% { stroke: ${ORANGE}; stroke-width: 2; }
-                    ${holdPct}% { stroke: ${ORANGE}; stroke-width: 2; }
-                    ${endPct}% { stroke: ${BORDER_INACTIVE}; stroke-width: 1.5; }
-                    ${completeStartPct}% { stroke: ${BORDER_INACTIVE}; stroke-width: 1.5; }
-                    ${completeEndPct}% { stroke: ${ORANGE}; stroke-width: 1.8; }
-                    ${Math.min(completeEndPct + 2, 100)}% { stroke: ${BORDER_INACTIVE}; stroke-width: 1.5; }
-                    100% { stroke: ${BORDER_INACTIVE}; stroke-width: 1.5; }
-                  }
-
-                  @keyframes hero-glow-${n.id} {
-                    0%, ${Math.max(startPct - 1, 0)}% { opacity: 0; stroke-width: 0; }
-                    ${peakPct}% { opacity: 0.6; stroke-width: 4; }
-                    ${holdPct}% { opacity: 0.4; stroke-width: 3; }
-                    ${endPct}% { opacity: 0; stroke-width: 0; }
-                    ${completeStartPct}% { opacity: 0; stroke-width: 0; }
-                    ${completeEndPct}% { opacity: 0.3; stroke-width: 2; }
-                    ${Math.min(completeEndPct + 2, 100)}% { opacity: 0; stroke-width: 0; }
-                    100% { opacity: 0; stroke-width: 0; }
-                  }
-                `;
-              },
-            ).join('')}
-          `}</style>
+          <style>{buildCSS()}</style>
         </defs>
 
-        {/* ---- Connecting Paths ---- */}
-        {PATHS.map((p, i) => (
-          <g key={`path-${i}`}>
-            {/* Shadow/glow path underneath */}
-            <path
-              d={p.d}
-              fill="none"
-              stroke={ORANGE}
-              strokeWidth={3}
-              strokeOpacity={0.08}
-              strokeLinecap="round"
-            />
-            {/* Main dashed path */}
-            <path
-              d={p.d}
-              fill="none"
-              stroke={BORDER_INACTIVE}
-              strokeWidth={1.5}
-              strokeLinecap="round"
-              className="hero-connect-path"
-            />
-          </g>
+        {/* ---- Background ---- */}
+        <rect x="0" y="0" width={VB_W} height={VB_H} fill={BG} />
+
+        {/* ---- Subtle vertical grid lines ---- */}
+        {Array.from({ length: 16 }).map((_, i) => (
+          <line
+            key={`grid-${i}`}
+            x1={50 + i * 46}
+            y1={20}
+            x2={50 + i * 46}
+            y2={VB_H - 20}
+            className="hero-grid-line"
+          />
         ))}
 
-        {/* ---- Particle Dots ---- */}
-        {PATHS.map((_, i) =>
-          [0, 1, 2].map((j) => (
+        {/* ---- Connection curves ---- */}
+        {ALL_PATHS.map((p) => (
+          <path
+            key={p.id}
+            d={p.d}
+            fill="none"
+            stroke={BLUE}
+            strokeWidth={1.5}
+            strokeOpacity={0.5}
+            strokeLinecap="round"
+            className={`hero-conn-${p.group}`}
+          />
+        ))}
+
+        {/* ---- Endpoint dots ---- */}
+        {ENDPOINTS.map((ep, i) => (
+          <circle
+            key={`ep-${i}`}
+            cx={ep.x}
+            cy={ep.y}
+            r={4}
+            fill={BLUE}
+            className={`hero-ep-${ep.group}`}
+          />
+        ))}
+
+        {/* ---- Particle dots ---- */}
+        {ALL_PATHS.map((p) =>
+          [0, 1].map((j) => (
             <circle
-              key={`particle-${i}-${j}`}
+              key={`ptcl-${p.id}-${j}`}
               r={2.5}
-              fill={ORANGE}
-              className={`hero-particle hero-particle-${i}-${j}`}
+              fill={BLUE}
+              className={`hero-ptcl-${p.id}-${j}`}
             />
           )),
         )}
 
-        {/* ---- Fork/Join Labels ---- */}
-        <text
-          x={170}
-          y={155}
-          textAnchor="middle"
-          fill={TEXT_MUTED}
-          fontSize={9}
-          fontWeight={500}
-          opacity={0.6}
-        >
-          FORK
-        </text>
-        <text
-          x={380}
-          y={155}
-          textAnchor="middle"
-          fill={TEXT_MUTED}
-          fontSize={9}
-          fontWeight={500}
-          opacity={0.6}
-        >
-          JOIN
-        </text>
+        {/* ---- Pill labels on paths ---- */}
+        {PILLS.map((pill) => {
+          const pw = Math.ceil(pill.label.length * 6.5 + 16);
+          return (
+            <g
+              key={pill.label}
+              className={`hero-pill-${pill.group}`}
+              style={{ transformOrigin: `${pill.x}px ${pill.y}px` }}
+            >
+              <rect
+                x={pill.x - pw / 2}
+                y={pill.y - 10}
+                width={pw}
+                height={20}
+                rx={10}
+                fill={BLUE}
+              />
+              <text
+                x={pill.x}
+                y={pill.y + 4}
+                textAnchor="middle"
+                fill="#FFFFFF"
+                fontSize={11}
+                fontWeight={600}
+                fontFamily="system-ui, -apple-system, sans-serif"
+              >
+                {pill.label}
+              </text>
+            </g>
+          );
+        })}
 
-        {/* ---- Pipeline Nodes ---- */}
-        {NODES.map((node) => (
-          <g key={node.id} className={`pipeline-hero-node-${node.id}`}>
-            <PipelineNode node={node} />
+        {/* ---- Cards ---- */}
+        {CARDS.map((card) => (
+          <g key={card.id} className={`hero-cg-${card.id}`}>
+            {/* Owner label above the card */}
+            <text
+              x={card.pos.x + CW / 2}
+              y={card.pos.y - 8}
+              textAnchor="middle"
+              fill={TEXT_MUTED}
+              fontSize={10}
+              fontWeight={500}
+              fontFamily="system-ui, -apple-system, sans-serif"
+            >
+              {card.owner}
+            </text>
+
+            {/* Glow layer (behind card) */}
+            <rect
+              x={card.pos.x - 2}
+              y={card.pos.y - 2}
+              width={CW + 4}
+              height={CH + 4}
+              rx={CR + 1}
+              fill="none"
+              stroke={BLUE}
+              strokeWidth={3}
+              strokeOpacity={0.15}
+              filter="url(#hero-card-glow)"
+              className={`hero-cgl-${card.id}`}
+              style={{ opacity: 0 }}
+            />
+
+            {/* Card body with shadow */}
+            <g filter="url(#hero-card-shadow)">
+              {/* White background */}
+              <rect
+                x={card.pos.x}
+                y={card.pos.y}
+                width={CW}
+                height={CH}
+                rx={CR}
+                fill={CARD_BG}
+                className={`hero-cb-${card.id}`}
+                stroke={BORDER_INACTIVE}
+                strokeWidth={1}
+              />
+              {/* Gold top bar (clipped to card top-radius) */}
+              <clipPath id={`hero-clip-${card.id}`}>
+                <rect
+                  x={card.pos.x}
+                  y={card.pos.y}
+                  width={CW}
+                  height={GOLD_BAR_H + CR}
+                  rx={CR}
+                />
+              </clipPath>
+              <rect
+                x={card.pos.x}
+                y={card.pos.y}
+                width={CW}
+                height={GOLD_BAR_H}
+                fill="url(#hero-gold-shimmer)"
+                clipPath={`url(#hero-clip-${card.id})`}
+              />
+            </g>
+
+            {/* Card content via foreignObject */}
+            <foreignObject
+              x={card.pos.x}
+              y={card.pos.y + GOLD_BAR_H}
+              width={CW}
+              height={CH - GOLD_BAR_H}
+            >
+              <div
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  padding: '8px 10px 6px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  fontFamily: 'system-ui, -apple-system, sans-serif',
+                  pointerEvents: 'none',
+                  boxSizing: 'border-box',
+                }}
+              >
+                {/* Top row: Code + Type */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: TEXT_PRIMARY, letterSpacing: '-0.01em' }}>
+                    {card.code}
+                  </span>
+                  <span style={{ fontSize: 9, fontWeight: 500, color: TEXT_MUTED, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    {card.type}
+                  </span>
+                </div>
+
+                {/* Status row */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 4 }}>
+                  <svg width="7" height="7" viewBox="0 0 8 8" style={{ flexShrink: 0 }}>
+                    <circle cx="4" cy="4" r="3.5" fill={card.statusColor} className={`hero-sd-${card.id}`} />
+                  </svg>
+                  <span style={{ fontSize: 10, fontWeight: 500, color: TEXT_PRIMARY }}>
+                    {card.statusLabel}
+                  </span>
+                </div>
+
+                {/* Metric row */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: 3 }}>
+                  <span style={{ fontSize: 9, color: TEXT_MUTED }}>{card.metricLabel}</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: TEXT_PRIMARY }}>{card.metricValue}</span>
+                </div>
+              </div>
+            </foreignObject>
           </g>
         ))}
-
-        {/* ---- Decorative elements ---- */}
-        {/* Subtle grid dots in background */}
-        {Array.from({ length: 12 }).map((_, i) =>
-          Array.from({ length: 8 }).map((_, j) => (
-            <circle
-              key={`dot-${i}-${j}`}
-              cx={i * 55 + 10}
-              cy={j * 55 + 15}
-              r={0.8}
-              fill={BORDER_INACTIVE}
-              opacity={0.3}
-            />
-          )),
-        )}
-
-        {/* Timing indicator bar at bottom */}
-        <rect
-          x={40}
-          y={375}
-          width={520}
-          height={2}
-          rx={1}
-          fill={BORDER_INACTIVE}
-          opacity={0.3}
-        />
-        <rect
-          x={40}
-          y={375}
-          width={520}
-          height={2}
-          rx={1}
-          fill={ORANGE}
-          opacity={0.5}
-          style={{
-            transformOrigin: '40px 376px',
-            animation: `hero-progress-bar ${CYCLE_DURATION}s linear infinite`,
-          }}
-        />
-
-        {/* Progress bar keyframes embedded */}
-        <style>{`
-          @keyframes hero-progress-bar {
-            0% { clip-path: inset(0 100% 0 0); }
-            100% { clip-path: inset(0 0% 0 0); }
-          }
-        `}</style>
-
-        {/* Time labels */}
-        <text x={40} y={392} fontSize={8} fill={TEXT_MUTED} opacity={0.5}>
-          0s
-        </text>
-        <text x={550} y={392} fontSize={8} fill={TEXT_MUTED} opacity={0.5} textAnchor="end">
-          ~3 min
-        </text>
       </svg>
     </motion.div>
   );
