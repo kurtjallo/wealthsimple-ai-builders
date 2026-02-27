@@ -3,41 +3,36 @@
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { Separator } from '@/components/ui/separator';
+
 import { StatusDot } from '@/components/ui/status-dot';
 import {
   LayoutDashboard,
   FileStack,
   Activity,
-  FileText,
-  Settings,
   Shield,
 } from 'lucide-react';
+import { getPipelineAgents } from '@/lib/config/agents';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { label: 'Case Queue', href: '/dashboard/cases', icon: FileStack },
   { label: 'New Case', href: '/cases/new', icon: Activity },
-  { label: 'Audit Trail', href: '/dashboard/audit', icon: FileText },
 ];
 
-const AGENT_SYSTEMS = [
-  { name: 'Document OCR', status: 'online' as const },
-  { name: 'Identity Verification', status: 'online' as const },
-  { name: 'Sanctions Screening', status: 'online' as const },
-  { name: 'Risk Scoring', status: 'online' as const },
-  { name: 'Case Narrator', status: 'online' as const },
-];
+const AGENT_SYSTEMS = getPipelineAgents().map(a => ({
+  name: a.sidebarName,
+  status: 'online' as const,
+}));
 
 export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="flex h-full w-56 flex-col border-r bg-slate-50/50">
+    <aside className="flex h-full w-60 flex-col bg-sidebar border-r border-sidebar-border">
       {/* Branding */}
-      <div className="flex h-14 items-center gap-2 border-b px-4">
+      <div className="flex h-14 items-center gap-2 border-b border-sidebar-border px-4">
         <Shield className="h-5 w-5 text-primary" />
-        <span className="font-semibold text-sm">KYC/AML Orchestrator</span>
+        <span className="text-foreground font-semibold text-sm tracking-tight">Sentinel</span>
       </div>
 
       {/* Navigation */}
@@ -50,10 +45,10 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors',
+                'flex items-center gap-3 px-3 py-2 text-sm transition-colors rounded-r-lg',
                 isActive
-                  ? 'bg-slate-900 text-white font-medium'
-                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
+                  ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium border-l-2 border-l-primary'
+                  : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground',
               )}
             >
               <Icon className="h-4 w-4 flex-shrink-0" />
@@ -63,32 +58,28 @@ export function Sidebar() {
         })}
       </nav>
 
-      <Separator />
+      <div className="mx-3 h-px bg-sidebar-border" />
 
       {/* Agent system health */}
       <div className="px-3 py-4">
-        <h3 className="mb-3 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+        <h3 className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
           Agent Systems
         </h3>
         <div className="space-y-2">
           {AGENT_SYSTEMS.map((system) => (
             <div key={system.name} className="flex items-center gap-2 px-3 py-1">
               <StatusDot status={system.status} size="xs" />
-              <span className="text-xs text-slate-500">{system.name}</span>
+              <span className="text-xs text-sidebar-foreground">{system.name}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* Footer */}
-      <div className="border-t px-3 py-3">
-        <Link
-          href="/dashboard/settings"
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors"
-        >
-          <Settings className="h-4 w-4" />
-          Settings
-        </Link>
+      <div className="border-t border-sidebar-border px-3 py-3">
+        <span className="flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground">
+          Sentinel v1.0
+        </span>
       </div>
     </aside>
   );

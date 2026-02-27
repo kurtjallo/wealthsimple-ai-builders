@@ -67,9 +67,9 @@ export function PipelineStageIndicator({
               <motion.div
                 className={cn(
                   'flex h-9 w-9 items-center justify-center rounded-full border-2 transition-colors duration-500',
-                  isActive && 'border-blue-500 bg-blue-50 text-blue-600 ring-4 ring-blue-100',
+                  isActive && 'border-primary bg-primary/10 text-primary ring-4 ring-primary/20',
                   isCompleted && 'border-emerald-500 bg-emerald-50 text-emerald-600',
-                  isPending && 'border-slate-200 bg-slate-50 text-slate-400',
+                  isPending && 'border-border bg-muted text-muted-foreground',
                 )}
                 animate={{
                   scale: isActive ? [1, 1.15, 1] : 1,
@@ -92,9 +92,9 @@ export function PipelineStageIndicator({
               <span
                 className={cn(
                   'text-[10px] font-medium whitespace-nowrap',
-                  isActive && 'text-blue-600',
+                  isActive && 'text-primary',
                   isCompleted && 'text-emerald-600',
-                  isPending && 'text-slate-400',
+                  isPending && 'text-muted-foreground',
                 )}
               >
                 {stage.label}
@@ -106,7 +106,7 @@ export function PipelineStageIndicator({
               <motion.div
                 className={cn(
                   'h-0.5 w-8 mx-1 mt-[-16px]',
-                  isCompleted ? 'bg-emerald-400' : 'bg-slate-200',
+                  isCompleted ? 'bg-emerald-500' : 'bg-border',
                 )}
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}

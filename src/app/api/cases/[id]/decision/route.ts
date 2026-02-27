@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { MIN_JUSTIFICATION_LENGTH } from '@/lib/constants';
 
 const VALID_DECISIONS = ['approved', 'denied', 'escalated'] as const;
 type Decision = typeof VALID_DECISIONS[number];
@@ -44,11 +45,11 @@ export async function POST(
     }
 
     // Minimum justification length
-    if (body.justification.trim().length < 10) {
+    if (body.justification.trim().length < MIN_JUSTIFICATION_LENGTH) {
       return NextResponse.json(
         {
           error: 'Justification too short',
-          details: 'Justification must be at least 10 characters. Please provide a meaningful explanation for your decision.',
+          details: `Justification must be at least ${MIN_JUSTIFICATION_LENGTH} characters. Please provide a meaningful explanation for your decision.`,
         },
         { status: 400 }
       );

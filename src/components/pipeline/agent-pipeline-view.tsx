@@ -80,15 +80,15 @@ export function AgentPipelineView({
               <div className={cn(
                 'h-6 w-0.5',
                 (currentStage && ['parallel_verification', 'risk_scoring', 'narrative_generation', 'completed'].includes(currentStage))
-                  ? 'bg-emerald-400'
-                  : 'bg-slate-200',
+                  ? 'bg-emerald-500'
+                  : 'bg-border',
               )} />
               {/* Fork indicator for parallel */}
               <div className={cn(
                 'h-0.5 w-48',
                 (currentStage && ['parallel_verification', 'risk_scoring', 'narrative_generation', 'completed'].includes(currentStage))
-                  ? 'bg-emerald-400'
-                  : 'bg-slate-200',
+                  ? 'bg-emerald-500'
+                  : 'bg-border',
               )} />
             </div>
           </motion.div>
@@ -136,14 +136,14 @@ export function AgentPipelineView({
               <div className={cn(
                 'h-0.5 w-48',
                 (currentStage && ['risk_scoring', 'narrative_generation', 'completed'].includes(currentStage))
-                  ? 'bg-emerald-400'
-                  : 'bg-slate-200',
+                  ? 'bg-emerald-500'
+                  : 'bg-border',
               )} />
               <div className={cn(
                 'h-6 w-0.5',
                 (currentStage && ['risk_scoring', 'narrative_generation', 'completed'].includes(currentStage))
-                  ? 'bg-emerald-400'
-                  : 'bg-slate-200',
+                  ? 'bg-emerald-500'
+                  : 'bg-border',
               )} />
             </div>
           </motion.div>
@@ -181,8 +181,8 @@ export function AgentPipelineView({
             <div className={cn(
               'h-6 w-0.5',
               (currentStage && ['narrative_generation', 'completed'].includes(currentStage))
-                ? 'bg-emerald-400'
-                : 'bg-slate-200',
+                ? 'bg-emerald-500'
+                : 'bg-border',
             )} />
           </motion.div>
 
@@ -218,10 +218,10 @@ export function AgentPipelineView({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          <h4 className="text-sm font-semibold text-red-800 mb-2">Pipeline Errors</h4>
+          <h4 className="text-sm font-semibold text-red-600 mb-2">Pipeline Errors</h4>
           <ul className="space-y-1">
             {pipelineUpdate.errors.map((err, i) => (
-              <li key={i} className="text-xs text-red-700">
+              <li key={i} className="text-xs text-red-600">
                 [{err.stage}] {err.agent_type}: {err.error_message}
               </li>
             ))}

@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { RISK_LEVEL_CONFIG } from '@/lib/constants';
+import { getRiskScoreColor } from '@/lib/config/risk';
 import { RiskLevel } from '@/types';
 import { cn } from '@/lib/utils';
 import { ShieldAlert, ShieldCheck, AlertTriangle } from 'lucide-react';
@@ -63,10 +64,10 @@ export function RiskProfileCard({
           <div className="flex flex-col items-center">
             <div className={cn(
               'flex h-16 w-16 items-center justify-center rounded-full border-4',
-              riskLevel === 'low' && 'border-emerald-500 text-emerald-700',
-              riskLevel === 'medium' && 'border-amber-500 text-amber-700',
-              riskLevel === 'high' && 'border-orange-500 text-orange-700',
-              riskLevel === 'critical' && 'border-red-500 text-red-700',
+              riskLevel === 'low' && 'border-emerald-500 text-emerald-600',
+              riskLevel === 'medium' && 'border-amber-500 text-amber-600',
+              riskLevel === 'high' && 'border-orange-500 text-orange-600',
+              riskLevel === 'critical' && 'border-red-500 text-red-600',
             )}>
               <span className="text-xl font-bold">{riskScore}</span>
             </div>
@@ -106,8 +107,8 @@ export function RiskProfileCard({
             <div>
               <h4 className="text-sm font-medium mb-3">Risk Factors</h4>
               <div className="space-y-3">
-                {riskFactors.map((factor, idx) => (
-                  <div key={idx} className="flex items-start gap-3">
+                {riskFactors.map((factor) => (
+                  <div key={factor.factor_name} className="flex items-start gap-3">
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-sm font-medium">
@@ -125,10 +126,7 @@ export function RiskProfileCard({
                         <div
                           className={cn(
                             'h-2 rounded-full transition-all',
-                            factor.score <= 25 && 'bg-emerald-500',
-                            factor.score > 25 && factor.score <= 50 && 'bg-amber-500',
-                            factor.score > 50 && factor.score <= 75 && 'bg-orange-500',
-                            factor.score > 75 && 'bg-red-500',
+                            getRiskScoreColor(factor.score),
                           )}
                           style={{ width: `${Math.min(factor.score, 100)}%` }}
                         />

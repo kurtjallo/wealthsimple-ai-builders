@@ -9,10 +9,12 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import {
   User, FileText, Cpu, CheckCircle2, Loader2, AlertCircle,
-  ArrowRight, Play, Eye
+  ArrowRight, ArrowLeft, Play, Eye
 } from 'lucide-react';
+import Link from 'next/link';
 import { DocumentUpload } from '@/components/cases/document-upload';
 import { ProcessingErrorDisplay } from '@/components/cases/processing-error-display';
+import { DashboardShell } from '@/components/layout/dashboard-shell';
 import type { PipelineErrorDisplay as PipelineErrorType } from '@/lib/pipeline/error-recovery';
 
 type WorkflowStep = 'applicant' | 'documents' | 'processing' | 'complete' | 'error';
@@ -164,12 +166,18 @@ export default function NewCasePage() {
   const stepIndex = ['applicant', 'documents', 'processing', 'complete'].indexOf(step);
 
   return (
-    <div className="container max-w-3xl mx-auto py-8 px-4">
-      <h1 className="text-2xl font-bold mb-2">New KYC Case</h1>
-      <p className="text-muted-foreground mb-6">
-        Create a new case, upload identity documents, and run AI-powered compliance checks.
-      </p>
-
+    <DashboardShell
+      title="New Case"
+      description="Create a new case and run AI-powered compliance checks"
+      actions={
+        <Link href="/dashboard/cases">
+          <Button variant="outline" size="sm" className="gap-1.5">
+            <ArrowLeft className="h-4 w-4" />
+            Back to Queue
+          </Button>
+        </Link>
+      }
+    >
       {/* Progress indicator */}
       <div className="flex items-center gap-2 mb-8">
         {(['applicant', 'documents', 'processing', 'complete'] as const).map((s, i) => (
@@ -277,9 +285,9 @@ export default function NewCasePage() {
               {progressEvents.map((event, i) => (
                 <div key={i} className="flex items-start gap-3">
                   {event.status === 'completed' ? (
-                    <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" />
                   ) : event.status === 'failed' ? (
-                    <AlertCircle className="h-4 w-4 text-red-500 mt-0.5 shrink-0" />
+                    <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 shrink-0" />
                   ) : (
                     <Loader2 className="h-4 w-4 animate-spin text-primary mt-0.5 shrink-0" />
                   )}
@@ -307,10 +315,10 @@ export default function NewCasePage() {
 
       {/* Step 4: Complete */}
       {step === 'complete' && pipelineResult && (
-        <Card className="border-green-200">
-          <CardHeader className="bg-green-50 rounded-t-lg">
+        <Card className="border-emerald-200">
+          <CardHeader className="bg-emerald-50 rounded-t-xl">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-5 w-5 text-green-600" />
+              <CheckCircle2 className="h-5 w-5 text-emerald-600" />
               <CardTitle>Processing Complete</CardTitle>
             </div>
             <CardDescription>
@@ -376,6 +384,6 @@ export default function NewCasePage() {
           )}
         </div>
       )}
-    </div>
+    </DashboardShell>
   );
 }

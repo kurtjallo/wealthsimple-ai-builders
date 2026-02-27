@@ -39,6 +39,8 @@ export interface Case {
   decision_justification: string | null;
   officer_id: string | null;
   narrative: string | null;
+  routing_decision: string | null;
+  routing_reasons: string[] | null;
   created_at: string;
   updated_at: string;
 }

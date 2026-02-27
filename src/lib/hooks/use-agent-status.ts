@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import { AgentType, AgentRunStatus } from '@/types';
 import { PipelineUpdate, AgentResultSummary } from './use-pipeline-stream';
+import { AGENT_REGISTRY, PIPELINE_AGENT_TYPES } from '@/lib/config/agents';
 
 export interface AgentStatusInfo {
   agentType: AgentType;
@@ -14,35 +15,6 @@ export interface AgentStatusInfo {
   error: string | null;
   order: number; // Pipeline order for layout
 }
-
-// Human-readable labels for each agent
-const AGENT_LABELS: Record<string, { label: string; description: string; order: number }> = {
-  document_processor: {
-    label: 'Document Processor',
-    description: 'OCR extraction and structured data parsing',
-    order: 1,
-  },
-  identity_verifier: {
-    label: 'Identity Verifier',
-    description: 'Cross-reference identity fields against application',
-    order: 2,
-  },
-  sanctions_screener: {
-    label: 'Sanctions Screener',
-    description: 'Screen against UN, OFAC, and PEP databases',
-    order: 2, // Same order as identity (parallel)
-  },
-  risk_scorer: {
-    label: 'Risk Scorer',
-    description: 'Aggregate signals into composite risk score',
-    order: 3,
-  },
-  case_narrator: {
-    label: 'Case Narrator',
-    description: 'Generate human-readable risk assessment',
-    order: 4,
-  },
-};
 
 // Derive agent status from the current pipeline stage
 function deriveAgentStatus(
@@ -92,16 +64,8 @@ export function useAgentStatus(
   pipelineUpdate: PipelineUpdate | null,
 ): AgentStatusInfo[] {
   return useMemo(() => {
-    const agentTypes: AgentType[] = [
-      'document_processor',
-      'identity_verifier',
-      'sanctions_screener',
-      'risk_scorer',
-      'case_narrator',
-    ];
-
-    return agentTypes.map((agentType) => {
-      const meta = AGENT_LABELS[agentType];
+    return PIPELINE_AGENT_TYPES.map((agentType) => {
+      const meta = AGENT_REGISTRY[agentType];
       const { status, result } = deriveAgentStatus(agentType, pipelineUpdate);
 
       // Find error for this agent

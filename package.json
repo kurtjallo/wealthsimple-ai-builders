@@ -10,6 +10,8 @@
     "test:documents": "tsx scripts/test-document-processing.ts"
   },
   "dependencies": {
+    "@fontsource-variable/jetbrains-mono": "^5.2.8",
+    "@fontsource-variable/plus-jakarta-sans": "^5.2.8",
     "@google/generative-ai": "^0.24.1",
     "@mistralai/mistralai": "^1.14.0",
     "@supabase/supabase-js": "^2.97.0",
@@ -26,6 +28,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "sonner": "^2.0.7",
+    "swr": "^2.4.0",
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {

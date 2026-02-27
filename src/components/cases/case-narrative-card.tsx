@@ -52,9 +52,9 @@ export function CaseNarrativeCard({
               variant="outline"
               className={cn(
                 'gap-1.5',
-                recommendedAction === 'approve' && 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                recommendedAction === 'deny' && 'bg-red-50 text-red-700 border-red-200',
-                recommendedAction === 'escalate' && 'bg-purple-50 text-purple-700 border-purple-200',
+                recommendedAction === 'approve' && 'bg-emerald-50 text-emerald-600 border-emerald-200',
+                recommendedAction === 'deny' && 'bg-red-50 text-red-600 border-red-200',
+                recommendedAction === 'escalate' && 'bg-purple-50 text-purple-600 border-purple-200',
               )}
             >
               <ActionIcon className="h-3 w-3" />
@@ -78,8 +78,8 @@ export function CaseNarrativeCard({
             <div>
               <h4 className="text-sm font-medium mb-2">Key Findings</h4>
               <ul className="space-y-1.5">
-                {keyFindings.map((finding, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-sm">
+                {keyFindings.map((finding) => (
+                  <li key={finding} className="flex items-start gap-2 text-sm">
                     <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary" />
                     {finding}
                   </li>

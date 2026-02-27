@@ -1,8 +1,11 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { Case, AgentRun, RiskScorerOutput, CaseNarratorOutput } from '@/types';
+import useSWR from 'swr';
+import { Case, AgentRun } from '@/types';
+import { fetcher } from '@/lib/swr/fetcher';
+import { parseRiskScorerOutput, parseCaseNarratorOutput } from '@/lib/utils/agent-output-guards';
 import { DashboardShell } from '@/components/layout/dashboard-shell';
 import { RiskProfileCard } from '@/components/cases/risk-profile-card';
 import { CaseNarrativeCard } from '@/components/cases/case-narrative-card';
@@ -22,52 +25,37 @@ export default function CaseDetailPage() {
   const params = useParams();
   const caseId = params.id as string;
 
-  const [caseData, setCaseData] = useState<Case | null>(null);
-  const [agentRuns, setAgentRuns] = useState<AgentRun[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [decisionMade, setDecisionMade] = useState(false);
 
-  const fetchData = useCallback(async () => {
-    if (!caseId) return;
-    setLoading(true);
-    setError(null);
+  const {
+    data: caseData,
+    error: caseError,
+    mutate: mutateCase,
+  } = useSWR<Case>(
+    caseId ? `/api/cases/${caseId}` : null,
+    fetcher,
+    { refreshInterval: 5000 }
+  );
 
-    try {
-      // Fetch case and agent runs in parallel
-      const [caseResponse, runsResponse] = await Promise.all([
-        fetch(`/api/cases/${caseId}`),
-        fetch(`/api/cases/${caseId}/agent-runs`),
-      ]);
+  const {
+    data: agentRunsData,
+    error: agentRunsError,
+  } = useSWR<{ agent_runs: AgentRun[] }>(
+    caseId ? `/api/cases/${caseId}/agent-runs` : null,
+    fetcher,
+    { refreshInterval: 5000 }
+  );
 
-      if (!caseResponse.ok) {
-        throw new Error('Case not found');
-      }
-
-      const caseResult = await caseResponse.json();
-      const runsResult = runsResponse.ok
-        ? await runsResponse.json()
-        : { agent_runs: [] };
-
-      setCaseData(caseResult);
-      setAgentRuns(runsResult.agent_runs || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load case');
-    } finally {
-      setLoading(false);
-    }
-  }, [caseId]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  const loading = (!caseData && !caseError) || (!agentRunsData && !agentRunsError);
+  const error = caseError || agentRunsError;
+  const agentRuns = agentRunsData?.agent_runs ?? [];
 
   // Extract agent-specific results from agent_runs
   const riskScorerRun = agentRuns.find(r => r.agent_type === 'risk_scorer' && r.status === 'completed');
   const narratorRun = agentRuns.find(r => r.agent_type === 'case_narrator' && r.status === 'completed');
 
-  const riskOutput = riskScorerRun?.output as unknown as RiskScorerOutput | null;
-  const narratorOutput = narratorRun?.output as unknown as CaseNarratorOutput | null;
+  const riskOutput = parseRiskScorerOutput(riskScorerRun?.output);
+  const narratorOutput = parseCaseNarratorOutput(narratorRun?.output);
 
   if (loading) {
     return (
@@ -85,7 +73,9 @@ export default function CaseDetailPage() {
       <DashboardShell title="Error">
         <Card>
           <CardContent className="py-8 text-center">
-            <p className="text-sm text-destructive">{error || 'Case not found'}</p>
+            <p className="text-sm text-destructive">
+              {error instanceof Error ? error.message : 'Case not found'}
+            </p>
             <Link href="/dashboard/cases">
               <Button variant="link" className="mt-2">
                 Back to Case Queue
@@ -168,14 +158,9 @@ export default function CaseDetailPage() {
           {caseData.status === 'review' && !caseData.decision && !decisionMade && (
             <DecisionWorkflow
               caseId={caseData.id}
-              onDecisionMade={(decision, justification) => {
-                setCaseData(prev => prev ? {
-                  ...prev,
-                  status: decision,
-                  decision: decision,
-                  decision_justification: justification,
-                } : null);
+              onDecisionMade={() => {
                 setDecisionMade(true);
+                mutateCase();
               }}
             />
           )}

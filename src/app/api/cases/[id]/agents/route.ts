@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { PIPELINE_AGENT_TYPES } from '@/lib/config/agents';
 import type { Database } from '@/lib/supabase/types';
 
 type AgentRunRow = Database['public']['Tables']['agent_runs']['Row'];
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ caseId: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { caseId } = await params;
+  const { id: caseId } = await params;
   const supabase = createServerSupabaseClient();
 
   const result = await supabase
@@ -35,15 +36,7 @@ export async function GET(
     completed_at: string | null;
   }> = {};
 
-  const allAgentTypes = [
-    'document_processor',
-    'identity_verifier',
-    'sanctions_screener',
-    'risk_scorer',
-    'case_narrator',
-  ];
-
-  for (const agentType of allAgentTypes) {
+  for (const agentType of PIPELINE_AGENT_TYPES) {
     const run = agentRuns.find(r => r.agent_type === agentType);
     agentStatus[agentType] = run
       ? {

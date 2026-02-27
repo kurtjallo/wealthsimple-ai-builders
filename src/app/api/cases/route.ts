@@ -7,8 +7,10 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
 
     const status = searchParams.get('status');
-    const limit = parseInt(searchParams.get('limit') || '50', 10);
-    const offset = parseInt(searchParams.get('offset') || '0', 10);
+    const rawLimit = parseInt(searchParams.get('limit') || '50', 10);
+    const rawOffset = parseInt(searchParams.get('offset') || '0', 10);
+    const limit = Math.min(Math.max(isNaN(rawLimit) ? 50 : rawLimit, 1), 100);
+    const offset = Math.max(isNaN(rawOffset) ? 0 : rawOffset, 0);
 
     let query = supabase
       .from('cases')

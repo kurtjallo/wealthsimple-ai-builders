@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useState } from 'react';
+import useSWR from 'swr';
 import { Case } from '@/types';
+import { fetcher } from '@/lib/swr/fetcher';
 import { DashboardShell } from '@/components/layout/dashboard-shell';
 import { CaseQueueTable } from '@/components/cases/case-queue-table';
 import { Card, CardContent } from '@/components/ui/card';
@@ -37,66 +39,42 @@ interface CaseResponse {
 
 export default function CaseQueuePage() {
   const [activeTab, setActiveTab] = useState<StatusGroup>('review');
-  const [casesByGroup, setCasesByGroup] = useState<Record<StatusGroup, Case[]>>({
-    'in-progress': [],
-    'review': [],
-    'completed': [],
-  });
-  const [countsByGroup, setCountsByGroup] = useState<Record<StatusGroup, number>>({
-    'in-progress': 0,
-    'review': 0,
-    'completed': 0,
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  const fetchCases = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  const { data: inProgressData, error: inProgressError } = useSWR<CaseResponse>(
+    `/api/cases?status=${STATUS_GROUPS['in-progress'].statuses}&limit=50`,
+    fetcher,
+    { refreshInterval: 10000 }
+  );
 
-    try {
-      // Fetch all three groups in parallel
-      const results = await Promise.all(
-        (Object.keys(STATUS_GROUPS) as StatusGroup[]).map(async (group) => {
-          const response = await fetch(
-            `/api/cases?status=${STATUS_GROUPS[group].statuses}&limit=50`
-          );
-          if (!response.ok) {
-            throw new Error(`Failed to fetch ${group} cases`);
-          }
-          const data: CaseResponse = await response.json();
-          return { group, cases: data.cases, total: data.total };
-        })
-      );
+  const { data: reviewData, error: reviewError } = useSWR<CaseResponse>(
+    `/api/cases?status=${STATUS_GROUPS['review'].statuses}&limit=50`,
+    fetcher,
+    { refreshInterval: 10000 }
+  );
 
-      const newCases: Record<StatusGroup, Case[]> = {
-        'in-progress': [],
-        'review': [],
-        'completed': [],
-      };
-      const newCounts: Record<StatusGroup, number> = {
-        'in-progress': 0,
-        'review': 0,
-        'completed': 0,
-      };
+  const { data: completedData, error: completedError } = useSWR<CaseResponse>(
+    `/api/cases?status=${STATUS_GROUPS['completed'].statuses}&limit=50`,
+    fetcher,
+    { refreshInterval: 10000 }
+  );
 
-      for (const result of results) {
-        newCases[result.group] = result.cases;
-        newCounts[result.group] = result.total;
-      }
+  const loading = (!inProgressData && !inProgressError)
+    || (!reviewData && !reviewError)
+    || (!completedData && !completedError);
 
-      setCasesByGroup(newCases);
-      setCountsByGroup(newCounts);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load cases');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const error = inProgressError || reviewError || completedError;
 
-  useEffect(() => {
-    fetchCases();
-  }, [fetchCases]);
+  const casesByGroup: Record<StatusGroup, Case[]> = {
+    'in-progress': inProgressData?.cases ?? [],
+    'review': reviewData?.cases ?? [],
+    'completed': completedData?.cases ?? [],
+  };
+
+  const countsByGroup: Record<StatusGroup, number> = {
+    'in-progress': inProgressData?.total ?? 0,
+    'review': reviewData?.total ?? 0,
+    'completed': completedData?.total ?? 0,
+  };
 
   return (
     <DashboardShell
@@ -123,13 +101,9 @@ export default function CaseQueuePage() {
         ) : error ? (
           <Card className="mt-4">
             <CardContent className="py-8 text-center">
-              <p className="text-sm text-destructive">{error}</p>
-              <button
-                onClick={fetchCases}
-                className="mt-2 text-sm text-primary underline"
-              >
-                Retry
-              </button>
+              <p className="text-sm text-destructive">
+                {error instanceof Error ? error.message : 'Failed to load cases'}
+              </p>
             </CardContent>
           </Card>
         ) : (

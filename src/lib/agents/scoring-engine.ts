@@ -7,6 +7,7 @@ import type {
   IdentityVerifierOutput,
   SanctionsScreenerOutput,
 } from '@/types/agents';
+import { getRiskCategory } from '@/lib/config/risk';
 
 // ---- Constants ----
 
@@ -17,14 +18,8 @@ export const DEFAULT_RISK_WEIGHTS = {
   pep: 0.20,
 } as const;
 
-// ---- Helpers ----
-
-export function getRiskCategory(score: number): RiskLevel {
-  if (score <= 25) return 'low';
-  if (score <= 50) return 'medium';
-  if (score <= 75) return 'high';
-  return 'critical';
-}
+// Re-export for backwards compatibility
+export { getRiskCategory };
 
 function cap(value: number, max = 100): number {
   return Math.min(Math.max(0, value), max);

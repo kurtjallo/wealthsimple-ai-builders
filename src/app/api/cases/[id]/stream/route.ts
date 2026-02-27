@@ -13,9 +13,9 @@ registerAllStubs();
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ caseId: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { caseId } = await params;
+  const { id: caseId } = await params;
 
   // Set up SSE response
   const encoder = new TextEncoder();

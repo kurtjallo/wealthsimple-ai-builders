@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-import { cn } from "@/lib/utils";
-
-const inter = Inter({ subsets: ["latin"] });
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "KYC/AML Operations Orchestrator",
-  description: "Multi-agent AI system for KYC/AML compliance",
+  title: "Sentinel — KYC/AML Operations",
+  description: "AI-powered compliance orchestration platform",
 };
 
 export default function RootLayout({
@@ -17,8 +14,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(inter.className, "min-h-screen bg-background antialiased")}>
+      <body className="min-h-screen bg-background font-sans">
         {children}
+        <Toaster
+          theme="light"
+          position="bottom-right"
+          toastOptions={{
+            className: "bg-card border-border text-foreground",
+          }}
+        />
       </body>
     </html>
   );

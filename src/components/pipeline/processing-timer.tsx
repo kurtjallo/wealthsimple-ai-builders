@@ -49,7 +49,7 @@ export function ProcessingTimer({ isRunning, className }: ProcessingTimerProps) 
     <motion.div
       className={cn(
         'flex items-center gap-1.5 text-xs font-mono',
-        isRunning ? 'text-blue-600' : 'text-slate-500',
+        isRunning ? 'text-primary' : 'text-muted-foreground',
         className,
       )}
       initial={{ opacity: 0, y: 4 }}

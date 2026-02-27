@@ -28,9 +28,9 @@ export function EvidenceSection({ evidenceLinks }: EvidenceSectionProps) {
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {evidenceLinks.map((link, idx) => (
+          {evidenceLinks.map((link) => (
             <div
-              key={idx}
+              key={`${link.source}-${link.claim}`}
               className="flex items-start gap-3 rounded-lg border p-3"
             >
               <div className="flex-1">
@@ -43,9 +43,9 @@ export function EvidenceSection({ evidenceLinks }: EvidenceSectionProps) {
                 variant="outline"
                 className={cn(
                   'flex-shrink-0 text-xs',
-                  link.confidence >= 0.8 && 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                  link.confidence >= 0.5 && link.confidence < 0.8 && 'bg-amber-50 text-amber-700 border-amber-200',
-                  link.confidence < 0.5 && 'bg-red-50 text-red-700 border-red-200',
+                  link.confidence >= 0.8 && 'bg-emerald-50 text-emerald-600 border-emerald-200',
+                  link.confidence >= 0.5 && link.confidence < 0.8 && 'bg-amber-50 text-amber-600 border-amber-200',
+                  link.confidence < 0.5 && 'bg-red-50 text-red-600 border-red-200',
                 )}
               >
                 {Math.round(link.confidence * 100)}%

@@ -5,6 +5,7 @@ import { PipelineState, PipelineStage } from '@/types';
 import { createProgressEmitter, removeProgressEmitter } from './progress-emitter';
 import { simulateAgentDelay } from './delay-simulator';
 import { evaluateConfidenceRouting } from './confidence-router';
+import { formatAgentName } from '@/lib/config/agents';
 import type { Database } from '@/lib/supabase/types';
 
 type CaseRow = Database['public']['Tables']['cases']['Row'];
@@ -182,6 +183,8 @@ export async function processCaseLifecycle(caseId: string): Promise<PipelineStat
           risk_score: riskData?.risk_score ?? null,
           risk_level: riskData?.risk_level ?? null,
           narrative: narrativeData?.narrative ?? null,
+          routing_decision: routing.recommended_action,
+          routing_reasons: routing.routing_reasons,
           updated_at: new Date().toISOString(),
         })
         .eq('id', caseId);
@@ -212,6 +215,8 @@ export async function processCaseLifecycle(caseId: string): Promise<PipelineStat
         .from('cases')
         .update({
           status: 'review', // Even on failure, route to review so officer sees the errors
+          routing_decision: routing.recommended_action,
+          routing_reasons: routing.routing_reasons,
           updated_at: new Date().toISOString(),
         })
         .eq('id', caseId);
@@ -252,13 +257,3 @@ function getStageMessage(stage: PipelineStage, applicantName: string): string {
   }
 }
 
-function formatAgentName(agentType: string): string {
-  const names: Record<string, string> = {
-    document_processor: 'Document Processor',
-    identity_verifier: 'Identity Verifier',
-    sanctions_screener: 'Sanctions Screener',
-    risk_scorer: 'Risk Scorer',
-    case_narrator: 'Case Narrator',
-  };
-  return names[agentType] || agentType;
-}

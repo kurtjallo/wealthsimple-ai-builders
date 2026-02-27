@@ -5,58 +5,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AgentRun, AgentType } from '@/types';
 import { cn } from '@/lib/utils';
+import { AGENT_REGISTRY } from '@/lib/config/agents';
 import {
   ChevronDown,
   ChevronRight,
-  FileSearch,
-  UserCheck,
-  ShieldAlert,
-  BarChart3,
-  FileText,
   Bot,
   CheckCircle2,
   XCircle,
   Clock,
   Loader2,
 } from 'lucide-react';
-
-// Agent display configuration
-const AGENT_DISPLAY: Record<AgentType, {
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  description: string;
-}> = {
-  orchestrator: {
-    label: 'Orchestrator',
-    icon: Bot,
-    description: 'Pipeline coordination',
-  },
-  document_processor: {
-    label: 'Document Processor',
-    icon: FileSearch,
-    description: 'OCR and data extraction',
-  },
-  identity_verifier: {
-    label: 'Identity Verifier',
-    icon: UserCheck,
-    description: 'Identity cross-referencing',
-  },
-  sanctions_screener: {
-    label: 'Sanctions Screener',
-    icon: ShieldAlert,
-    description: 'Sanctions list screening',
-  },
-  risk_scorer: {
-    label: 'Risk Scorer',
-    icon: BarChart3,
-    description: 'Risk score calculation',
-  },
-  case_narrator: {
-    label: 'Case Narrator',
-    icon: FileText,
-    description: 'Narrative generation',
-  },
-};
 
 interface AgentResultsPanelProps {
   agentRuns: AgentRun[];
@@ -105,7 +63,7 @@ export function AgentResultsPanel({ agentRuns }: AgentResultsPanelProps) {
       </CardHeader>
       <CardContent className="space-y-2 p-0">
         {agentRuns.map((run) => {
-          const agentConfig = AGENT_DISPLAY[run.agent_type as AgentType];
+          const agentConfig = AGENT_REGISTRY[run.agent_type as AgentType];
           const isExpanded = expandedAgents.has(run.id);
           const Icon = agentConfig?.icon || Bot;
 
@@ -143,7 +101,7 @@ export function AgentResultsPanel({ agentRuns }: AgentResultsPanelProps) {
               {/* Expanded detail */}
               {isExpanded && run.output && (
                 <div className="px-6 pb-4 pl-14">
-                  <div className="rounded-md border bg-muted/30 p-4">
+                  <div className="rounded-md border bg-muted p-4">
                     <pre className="text-xs whitespace-pre-wrap overflow-auto max-h-64">
                       {JSON.stringify(run.output, null, 2)}
                     </pre>
@@ -175,21 +133,21 @@ function AgentStatusBadge({ status }: { status: string }) {
   switch (status) {
     case 'completed':
       return (
-        <Badge variant="outline" className="gap-1 bg-emerald-50 text-emerald-700 border-emerald-200 text-xs">
+        <Badge variant="outline" className="gap-1 bg-emerald-50 text-emerald-600 border-emerald-200 text-xs">
           <CheckCircle2 className="h-3 w-3" />
           Complete
         </Badge>
       );
     case 'failed':
       return (
-        <Badge variant="outline" className="gap-1 bg-red-50 text-red-700 border-red-200 text-xs">
+        <Badge variant="outline" className="gap-1 bg-red-50 text-red-600 border-red-200 text-xs">
           <XCircle className="h-3 w-3" />
           Failed
         </Badge>
       );
     case 'running':
       return (
-        <Badge variant="outline" className="gap-1 bg-blue-50 text-blue-700 border-blue-200 text-xs">
+        <Badge variant="outline" className="gap-1 bg-primary/10 text-primary border-primary/20 text-xs">
           <Loader2 className="h-3 w-3 animate-spin" />
           Running
         </Badge>

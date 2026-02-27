@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
+import { MIN_JUSTIFICATION_LENGTH } from '@/lib/constants';
 import {
   CheckCircle2,
   XCircle,
@@ -91,8 +92,8 @@ export function DecisionWorkflow({ caseId, onDecisionMade }: DecisionWorkflowPro
   const handleSubmit = async () => {
     if (!selectedDecision) return;
 
-    if (justification.trim().length < 10) {
-      setError('Please provide a meaningful justification (at least 10 characters).');
+    if (justification.trim().length < MIN_JUSTIFICATION_LENGTH) {
+      setError(`Please provide a meaningful justification (at least ${MIN_JUSTIFICATION_LENGTH} characters).`);
       return;
     }
 
@@ -156,8 +157,8 @@ export function DecisionWorkflow({ caseId, onDecisionMade }: DecisionWorkflowPro
                   variant={option.buttonVariant}
                   className={cn(
                     'h-auto flex-col gap-2 py-4',
-                    option.value === 'approved' && 'border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700',
-                    option.value === 'escalated' && 'border-purple-200 hover:bg-purple-50 hover:text-purple-700',
+                    option.value === 'approved' && 'border-emerald-200 hover:bg-emerald-50 hover:text-emerald-600',
+                    option.value === 'escalated' && 'border-purple-200 hover:bg-purple-50 hover:text-purple-600',
                   )}
                   onClick={() => handleSelectDecision(option.value)}
                 >
@@ -211,8 +212,8 @@ export function DecisionWorkflow({ caseId, onDecisionMade }: DecisionWorkflowPro
                 disabled={isSubmitting}
               />
               <p className="mt-1.5 text-xs text-muted-foreground">
-                {justification.trim().length}/10 minimum characters
-                {justification.trim().length >= 10 && (
+                {justification.trim().length}/{MIN_JUSTIFICATION_LENGTH} minimum characters
+                {justification.trim().length >= MIN_JUSTIFICATION_LENGTH && (
                   <span className="ml-1 text-emerald-600">
                     <CheckCircle2 className="inline h-3 w-3" /> Meets minimum
                   </span>
@@ -238,7 +239,7 @@ export function DecisionWorkflow({ caseId, onDecisionMade }: DecisionWorkflowPro
             </Button>
             <Button
               onClick={handleSubmit}
-              disabled={isSubmitting || justification.trim().length < 10}
+              disabled={isSubmitting || justification.trim().length < MIN_JUSTIFICATION_LENGTH}
               className={cn(
                 selectedOption?.confirmClass,
                 'gap-1.5',

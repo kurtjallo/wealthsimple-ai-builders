@@ -1,4 +1,5 @@
 import { PipelineState, PipelineError } from '@/types';
+import { formatAgentName } from '@/lib/config/agents';
 
 export type ErrorSeverity = 'info' | 'warning' | 'error' | 'critical';
 
@@ -193,13 +194,3 @@ export function getRecoveryStrategy(pipelineState: PipelineState): RecoveryStrat
   };
 }
 
-function formatAgentName(agentType: string): string {
-  const names: Record<string, string> = {
-    document_processor: 'Document Processor',
-    identity_verifier: 'Identity Verifier',
-    sanctions_screener: 'Sanctions Screener',
-    risk_scorer: 'Risk Scorer',
-    case_narrator: 'Case Narrator',
-  };
-  return names[agentType] || agentType;
-}

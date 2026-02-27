@@ -4,8 +4,6 @@
 @import "@fontsource-variable/plus-jakarta-sans";
 @import "@fontsource-variable/jetbrains-mono";
 
-@custom-variant dark (&:is(.dark *));
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -52,51 +50,6 @@
 :root {
   --radius: 0.75rem;
 
-  --background: oklch(0.145 0.005 286);
-  --foreground: oklch(0.985 0 0);
-
-  --card: oklch(0.21 0.006 286);
-  --card-foreground: oklch(0.985 0 0);
-
-  --popover: oklch(0.21 0.006 286);
-  --popover-foreground: oklch(0.985 0 0);
-
-  --primary: #f35c1d;
-  --primary-foreground: #ffffff;
-
-  --secondary: oklch(0.285 0.006 286);
-  --secondary-foreground: oklch(0.71 0.013 286);
-
-  --muted: oklch(0.285 0.006 286);
-  --muted-foreground: oklch(0.55 0.013 286);
-
-  --accent: oklch(0.285 0.006 286);
-  --accent-foreground: oklch(0.985 0 0);
-
-  --destructive: #ef4444;
-
-  --border: oklch(0.285 0.006 286);
-  --input: oklch(0.37 0.013 286);
-  --ring: #f35c1d;
-
-  --chart-1: #f35c1d;
-  --chart-2: #22c55e;
-  --chart-3: #f59e0b;
-  --chart-4: #a855f7;
-  --chart-5: #3b82f6;
-
-  --sidebar: oklch(0.12 0.005 286);
-  --sidebar-foreground: oklch(0.71 0.013 286);
-  --sidebar-primary: #f35c1d;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: oklch(0.21 0.006 286);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.21 0.006 286);
-  --sidebar-ring: #f35c1d;
-}
-
-/* Landing page light mode */
-.landing {
   --background: #FAFAF8;
   --foreground: #1A1A1A;
 
@@ -123,6 +76,21 @@
   --border: #E5E5E3;
   --input: #E5E5E3;
   --ring: #f35c1d;
+
+  --chart-1: #f35c1d;
+  --chart-2: #16a34a;
+  --chart-3: #d97706;
+  --chart-4: #9333ea;
+  --chart-5: #2563eb;
+
+  --sidebar: #F5F5F3;
+  --sidebar-foreground: #4B5563;
+  --sidebar-primary: #f35c1d;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #EAEAE8;
+  --sidebar-accent-foreground: #1A1A1A;
+  --sidebar-border: #E5E5E3;
+  --sidebar-ring: #f35c1d;
 }
 
 @keyframes pipeline-flow {
@@ -173,11 +141,11 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: oklch(0.37 0.013 286);
+    background: #D1D5DB;
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: oklch(0.45 0.013 286);
+    background: #9CA3AF;
   }
   table {
     border-collapse: separate;

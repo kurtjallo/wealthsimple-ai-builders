@@ -38,10 +38,10 @@ const AGENT_ICONS: Record<string, LucideIcon> = {
 
 // Border color based on status
 const STATUS_BORDER: Record<AgentRunStatus, string> = {
-  pending: 'border-slate-200',
-  running: 'border-blue-400 shadow-blue-100 shadow-md',
-  completed: 'border-emerald-400 shadow-emerald-100 shadow-sm',
-  failed: 'border-red-400 shadow-red-100 shadow-sm',
+  pending: 'border-border',
+  running: 'border-primary',
+  completed: 'border-emerald-500',
+  failed: 'border-red-500',
 };
 
 export function AgentStatusCard({
@@ -74,14 +74,14 @@ export function AgentStatusCard({
         className={cn(
           'relative overflow-hidden transition-all duration-500',
           STATUS_BORDER[status],
-          status === 'running' && 'ring-2 ring-blue-200 ring-offset-1 animate-glow-pulse',
+          status === 'running' && 'ring-2 ring-primary/30 ring-offset-1 ring-offset-background animate-glow-pulse',
           className,
         )}
       >
         {/* Progress bar for running state */}
         {status === 'running' && (
-          <div className="absolute top-0 left-0 h-1 w-full overflow-hidden bg-blue-100">
-            <div className="h-full w-1/3 animate-[shimmer_1.5s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
+          <div className="absolute top-0 left-0 h-1 w-full overflow-hidden bg-primary/10">
+            <div className="h-full w-1/3 animate-[shimmer_1.5s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-primary to-transparent" />
           </div>
         )}
 
@@ -100,10 +100,10 @@ export function AgentStatusCard({
             <div className="flex items-center gap-2">
               <div className={cn(
                 'flex h-8 w-8 items-center justify-center rounded-lg',
-                status === 'pending' && 'bg-slate-100 text-slate-400',
-                status === 'running' && 'bg-blue-100 text-blue-600',
-                status === 'completed' && 'bg-emerald-100 text-emerald-600',
-                status === 'failed' && 'bg-red-100 text-red-600',
+                status === 'pending' && 'bg-muted text-muted-foreground',
+                status === 'running' && 'bg-primary/10 text-primary',
+                status === 'completed' && 'bg-emerald-50 text-emerald-600',
+                status === 'failed' && 'bg-red-50 text-red-600',
               )}>
                 <Icon className="h-4 w-4" />
               </div>
@@ -133,7 +133,7 @@ export function AgentStatusCard({
               )}
               {durationMs !== null && (
                 <div className="flex items-center gap-1">
-                  <span className="font-medium text-slate-600">
+                  <span className="font-medium text-muted-foreground">
                     {durationMs < 1000
                       ? `${durationMs}ms`
                       : `${(durationMs / 1000).toFixed(1)}s`}
@@ -152,11 +152,11 @@ export function AgentStatusCard({
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="flex items-center gap-2 text-xs text-blue-600">
+              <div className="flex items-center gap-2 text-xs text-primary">
                 <div className="flex gap-1">
-                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-blue-500 animate-bounce [animation-delay:0ms]" />
-                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-blue-500 animate-bounce [animation-delay:150ms]" />
-                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-blue-500 animate-bounce [animation-delay:300ms]" />
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-bounce [animation-delay:0ms]" />
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-bounce [animation-delay:150ms]" />
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-bounce [animation-delay:300ms]" />
                 </div>
                 <span>Processing...</span>
               </div>

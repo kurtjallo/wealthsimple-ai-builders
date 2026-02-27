@@ -17,22 +17,22 @@ const STATUS_CONFIG: Record<AgentRunStatus, {
   pending: {
     label: 'Pending',
     variant: 'outline',
-    className: 'border-slate-300 text-slate-500 bg-slate-50',
+    className: 'border-border text-muted-foreground bg-muted',
   },
   running: {
     label: 'Running',
     variant: 'default',
-    className: 'bg-blue-500 text-white border-blue-600 animate-pulse',
+    className: 'bg-primary text-primary-foreground border-primary animate-pulse',
   },
   completed: {
     label: 'Complete',
     variant: 'default',
-    className: 'bg-emerald-500 text-white border-emerald-600',
+    className: 'bg-emerald-500 text-white border-emerald-500',
   },
   failed: {
     label: 'Failed',
     variant: 'destructive',
-    className: 'bg-red-500 text-white border-red-600',
+    className: 'bg-red-500 text-white border-red-500',
   },
 };
 

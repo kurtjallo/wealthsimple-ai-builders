@@ -20,12 +20,18 @@ export function ConfidenceRing({
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - confidence * circumference;
 
-  // Color based on confidence level
-  const color =
-    confidence >= 0.9 ? '#10b981' : // emerald-500
-    confidence >= 0.7 ? '#3b82f6' : // blue-500
-    confidence >= 0.5 ? '#f59e0b' : // amber-500
-    '#ef4444'; // red-500
+  // Color based on confidence level (Tailwind color tokens)
+  const strokeClass =
+    confidence >= 0.9 ? 'stroke-emerald-500' :
+    confidence >= 0.7 ? 'stroke-blue-500' :
+    confidence >= 0.5 ? 'stroke-amber-500' :
+    'stroke-red-500';
+
+  const textClass =
+    confidence >= 0.9 ? 'text-emerald-500' :
+    confidence >= 0.7 ? 'text-blue-500' :
+    confidence >= 0.5 ? 'text-amber-500' :
+    'text-red-500';
 
   const percentage = Math.round(confidence * 100);
 
@@ -37,7 +43,7 @@ export function ConfidenceRing({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="#e2e8f0"
+          className="stroke-border"
           strokeWidth={strokeWidth}
           fill="none"
         />
@@ -46,9 +52,8 @@ export function ConfidenceRing({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke={color}
+          className={cn('fill-none', strokeClass)}
           strokeWidth={strokeWidth}
-          fill="none"
           strokeLinecap="round"
           strokeDasharray={circumference}
           initial={{ strokeDashoffset: circumference }}
@@ -62,8 +67,7 @@ export function ConfidenceRing({
       </svg>
       {/* Center text */}
       <motion.span
-        className="absolute text-xs font-bold"
-        style={{ color }}
+        className={cn('absolute text-xs font-bold', textClass)}
         initial={{ opacity: 0, scale: 0.5 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.6, duration: 0.4 }}
