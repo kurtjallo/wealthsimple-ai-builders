@@ -68,7 +68,7 @@ When entering plan mode, follow this protocol:
 
 ## Project State
 
-- **Status**: Phase 8 complete — Dashboard, pipeline visualization, case lifecycle all done. Ready for Phase 9.
+- **Status**: Phase 9 complete — Regulatory audit trail, HITL enforcement, FINTRAC compliance UI all done. Ready for Phase 10.
 - **Planning docs**:
   - `.planning/PROJECT.md` — full project context and requirements
   - `.planning/REQUIREMENTS.md` — 26 v1 requirements with traceability
@@ -292,6 +292,29 @@ When entering plan mode, follow this protocol:
 - `src/app/cases/new/page.tsx` — 4-step wizard: applicant info → document upload → processing → completion
 - `src/app/api/cases/[id]/progress/route.ts` — SSE endpoint streaming pipeline progress events
 - `src/lib/pipeline/__tests__/golden-path.test.ts` — Integration test for full pipeline lifecycle
+
+### Phase 9: Regulatory & Audit Trail (Plans 09-01 to 09-04)
+
+**Plan 09-01: Audit Logging System**
+- `src/lib/audit/types.ts` — AuditEventType, AgentAuditPayload, HumanDecisionAuditPayload, SystemAuditPayload, AuditLogInsert
+- `src/lib/audit/constants.ts` — AUDIT_ACTIONS (17 actions), ACTOR_TYPES, AuditAction type
+- `src/lib/audit/logger.ts` — logAgentAction(), logHumanDecision(), logSystemEvent(), logAuditEvent() (never throws)
+- `supabase/migrations/010_audit_trail_enhancements.sql` — event_type column, 4 compliance indexes, FINTRAC table comment
+
+**Plan 09-02: Human-in-the-Loop Enforcement**
+- `src/lib/audit/guards.ts` — validateHumanDecision(), validateSTRAuthority(), DecisionValidationError
+- `src/app/api/cases/[id]/decide/route.ts` — POST endpoint: officer_id + justification required, rejects AI actors (REG-01, REG-02)
+- `src/app/api/cases/[id]/str/route.ts` — POST/GET endpoints: STR filing exclusively human, FINTRAC context returned (REG-03)
+
+**Plan 09-03: Audit Trail Viewer**
+- `src/app/api/cases/[id]/audit/route.ts` — GET endpoint with filtering (event_type), pagination, enriched labels
+- `src/app/api/cases/[id]/audit/export/route.ts` — GET endpoint returning CSV with FINTRAC compliance header
+- `src/components/audit/audit-trail-viewer.tsx` — Timeline component with tab filtering, CSV export, confidence/justification display
+
+**Plan 09-04: FINTRAC Compliance UI**
+- `src/components/audit/compliance-badge.tsx` — ComplianceBadge (3 variants), RecordRetentionNotice, HumanOnlyIndicator
+- `src/components/audit/str-workflow-panel.tsx` — STR filing workflow with FINTRAC context, suspicious indicators, officer validation
+- `src/components/audit/decision-panel.tsx` — Approve/Deny/Escalate with HITL enforcement, AI recommendation marked "Advisory Only"
 
 ## Phase Plans Summary
 
