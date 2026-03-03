@@ -49,9 +49,8 @@ const PRODUCT_ITEMS = [
 
 const NAV_LINKS = [
   { label: "Product", href: "#product" },
-  { label: "Solutions", href: "#solutions" },
-  { label: "Company", href: "#company" },
-  { label: "Pricing", href: "#pricing" },
+  { label: "Features", href: "#features" },
+  { label: "How It Works", href: "#how-it-works" },
 ] as const;
 
 /* -------------------------------------------------------------------------- */

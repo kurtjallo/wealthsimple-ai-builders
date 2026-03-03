@@ -46,18 +46,21 @@ export function CaseNarrativeCard({
             Case Narrative
           </CardTitle>
           {recommendedAction && (
-            <Badge
-              variant="outline"
-              className={cn(
-                'gap-1.5',
-                recommendedAction === 'approve' && 'bg-emerald-50 text-emerald-600 border-emerald-200',
-                recommendedAction === 'deny' && 'bg-red-50 text-red-600 border-red-200',
-                recommendedAction === 'escalate' && 'bg-purple-50 text-purple-600 border-purple-200',
-              )}
-            >
-              <ActionIcon size={16} strokeWidth={1.5} />
-              AI Recommends: {recommendedAction.charAt(0).toUpperCase() + recommendedAction.slice(1)}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Badge
+                variant="outline"
+                className={cn(
+                  'gap-1.5',
+                  recommendedAction === 'approve' && 'bg-emerald-50 text-emerald-600 border-emerald-200',
+                  recommendedAction === 'deny' && 'bg-red-50 text-red-600 border-red-200',
+                  recommendedAction === 'escalate' && 'bg-purple-50 text-purple-600 border-purple-200',
+                )}
+              >
+                <ActionIcon size={16} strokeWidth={1.5} />
+                AI Recommends: {recommendedAction.charAt(0).toUpperCase() + recommendedAction.slice(1)}
+              </Badge>
+              <span className="text-xs text-muted-foreground/70 font-medium">Advisory Only</span>
+            </div>
           )}
         </div>
       </CardHeader>

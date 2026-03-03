@@ -2,9 +2,9 @@
 
 ## What the Human Can Do
 
-A compliance officer opens a new account application and sees a complete risk profile — synthesized from five AI agents that ran in parallel — instead of a stack of raw documents. Every data point links to its source with a confidence score. The officer reviews the plain-English case narrative, checks sanctions results, and clicks Approve, Deny, or Escalate with mandatory justification. The entire review takes about 3 minutes.
+A compliance officer opens a new account application and sees a complete risk profile — synthesized from five specialized AI agents working through an orchestrated pipeline — instead of a stack of raw documents. Every data point links to its source with a confidence score. The officer reviews the plain-English case narrative, checks sanctions results, and clicks Approve, Deny, or Escalate with mandatory justification. The entire review takes about 3 minutes.
 
-Before this system, that same case took 4-5 days. An analyst would manually read passport scans, cross-reference sanctions databases, pull PEP lists, and write a case summary. With the orchestrator, the officer skips data gathering and focuses on judgment. STR filings come pre-assembled with evidence links. Every action is timestamped and exportable as CSV for FINTRAC audits.
+Before this system, that same case took 5 days. An analyst would manually read passport scans, cross-reference sanctions databases, pull PEP lists, and write a case summary. With the orchestrator, the officer skips data gathering and focuses on judgment. STR filings come pre-assembled with evidence links. Every action is timestamped and exportable as CSV for FINTRAC audits.
 
 ## What the AI Handles
 

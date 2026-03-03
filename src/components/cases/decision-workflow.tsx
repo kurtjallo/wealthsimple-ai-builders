@@ -99,12 +99,13 @@ export function DecisionWorkflow({ caseId, onDecisionMade }: DecisionWorkflowPro
     setError(null);
 
     try {
-      const response = await fetch(`/api/cases/${caseId}/decision`, {
+      const response = await fetch(`/api/cases/${caseId}/decide`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           decision: selectedDecision,
           justification: justification.trim(),
+          officer_id: 'officer-demo-001',
         }),
       });
 

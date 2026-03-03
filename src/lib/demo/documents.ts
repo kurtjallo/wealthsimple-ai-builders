@@ -27,8 +27,6 @@ export const demoDocuments: DocumentInsert[] = [
     file_name: 'sarah_chen_passport.pdf',
     file_path: null,
     file_url: '/demo/docs/sarah_chen_passport.pdf',
-    file_size: 2458624,
-    mime_type: 'application/pdf',
     ocr_output: `CANADA / CANADA
 PASSPORT / PASSEPORT
 
@@ -79,8 +77,6 @@ C48291734CAN9103155F3206229<<<<<<<<<<<<<<02`,
     file_name: 'sarah_chen_hydro_bill.pdf',
     file_path: null,
     file_url: '/demo/docs/sarah_chen_hydro_bill.pdf',
-    file_size: 1245184,
-    mime_type: 'application/pdf',
     ocr_output: `Toronto Hydro-Electric System Limited
 Customer Account Statement
 
@@ -133,8 +129,6 @@ Please pay by the due date to avoid late charges.`,
     file_name: 'viktor_petrov_passport.pdf',
     file_path: null,
     file_url: '/demo/docs/viktor_petrov_passport.pdf',
-    file_size: 2891776,
-    mime_type: 'application/pdf',
     ocr_output: `RUSSIAN FEDERATION / РОССИЙСКАЯ ФЕДЕРАЦИЯ
 PASSPORT / ПАСПОРТ
 
@@ -185,8 +179,6 @@ P<RUSPETROV<<VIKTOR<<<<<<<<<<<<<<<<<<<<<<
     file_name: 'amara_okafor_license.jpg',
     file_path: null,
     file_url: '/demo/docs/amara_okafor_license.jpg',
-    file_size: 1843200,
-    mime_type: 'image/jpeg',
     ocr_output: `ONTARIO
 DRIVER'S LICENCE / PERMIS DE CONDUIRE
 
@@ -242,8 +234,6 @@ Expiry: 2028/07/22
     file_name: 'maria_gonzalez_passport.pdf',
     file_path: null,
     file_url: '/demo/docs/maria_gonzalez_passport.pdf',
-    file_size: 2654208,
-    mime_type: 'application/pdf',
     ocr_output: `ESTADOS UNIDOS MEXICANOS
 PASAPORTE / PASSPORT
 
@@ -294,8 +284,6 @@ G284910379MEX8209033F3402181<<<<<<<<<<<<<<04`,
     file_name: 'maria_gonzalez_enbridge_bill.pdf',
     file_path: null,
     file_url: '/demo/docs/maria_gonzalez_enbridge_bill.pdf',
-    file_size: 987136,
-    mime_type: 'application/pdf',
     ocr_output: `Enbridge Gas Inc.
 Account Statement
 
@@ -345,8 +333,6 @@ Total Amount Due                   $162.10`,
     file_name: 'james_oduya_passport.pdf',
     file_path: null,
     file_url: '/demo/docs/james_oduya_passport.pdf',
-    file_size: 2345984,
-    mime_type: 'application/pdf',
     ocr_output: `CANADA / CANADA
 PASSPORT / PASSEPORT
 
@@ -397,8 +383,6 @@ C73910429CAN8806291M3303056<<<<<<<<<<<<<<08`,
     file_name: 'james_oduya_epcor_bill.pdf',
     file_path: null,
     file_url: '/demo/docs/james_oduya_epcor_bill.pdf',
-    file_size: 1123328,
-    mime_type: 'application/pdf',
     ocr_output: `EPCOR Utilities Inc.
 Monthly Statement
 
@@ -445,8 +429,6 @@ Due Date: February 28, 2026`,
     file_name: 'james_oduya_td_statement.pdf',
     file_path: null,
     file_url: '/demo/docs/james_oduya_td_statement.pdf',
-    file_size: 3145728,
-    mime_type: 'application/pdf',
     ocr_output: null,
     ocr_raw_text: null,
     extracted_data: null,

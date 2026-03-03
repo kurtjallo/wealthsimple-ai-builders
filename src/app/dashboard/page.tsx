@@ -1,8 +1,42 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import { DashboardShell } from '@/components/layout/dashboard-shell';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
+interface CaseStats {
+  total: number;
+  pendingReview: number;
+  completed: number;
+}
+
 export default function DashboardOverview() {
+  const [stats, setStats] = useState<CaseStats | null>(null);
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const res = await fetch('/api/cases?limit=100');
+        if (!res.ok) return;
+        const data = await res.json();
+        const cases = data.cases || [];
+        const total = data.total || cases.length;
+        const pendingReview = cases.filter(
+          (c: { status: string }) => c.status === 'review'
+        ).length;
+        const completed = cases.filter(
+          (c: { status: string }) =>
+            c.status === 'approved' || c.status === 'escalated' || c.status === 'denied'
+        ).length;
+        setStats({ total, pendingReview, completed });
+      } catch {
+        // silently fail — cards will stay at "--"
+      }
+    }
+    fetchStats();
+  }, []);
+
   return (
     <DashboardShell
       title="Overview"
@@ -11,23 +45,23 @@ export default function DashboardOverview() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Total Cases"
-          value="--"
+          value={stats ? String(stats.total) : '--'}
           description="All cases in system"
         />
         <StatsCard
           title="Pending Review"
-          value="--"
+          value={stats ? String(stats.pendingReview) : '--'}
           description="Awaiting officer decision"
         />
         <StatsCard
-          title="Approved"
-          value="--"
-          description="Cases approved"
+          title="Cases Completed"
+          value={stats ? String(stats.completed) : '--'}
+          description="Approved, denied, or escalated"
         />
         <StatsCard
-          title="Escalated"
-          value="--"
-          description="Cases requiring escalation"
+          title="Active Agents"
+          value="5"
+          description="Agent types in pipeline"
         />
       </div>
 

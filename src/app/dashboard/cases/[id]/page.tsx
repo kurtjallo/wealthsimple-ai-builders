@@ -12,6 +12,7 @@ import { CaseNarrativeCard } from '@/components/cases/case-narrative-card';
 import { AgentResultsPanel } from '@/components/cases/agent-results-panel';
 import { EvidenceSection } from '@/components/cases/evidence-section';
 import { DecisionWorkflow } from '@/components/cases/decision-workflow';
+import { AuditTrailViewer } from '@/components/audit/audit-trail-viewer';
 import { CaseStatusBadge } from '@/components/cases/case-status-badge';
 import { CaseRiskBadge } from '@/components/cases/case-risk-badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -91,11 +92,10 @@ export default function CaseDetailPage() {
     <DashboardShell
       title={caseData.applicant_name}
       description={`Case ID: ${caseData.id}`}
-      actions={
+      backAction={
         <Link href="/dashboard/cases">
-          <Button variant="outline" size="sm" className="gap-1.5">
-            <ArrowLeft size={16} strokeWidth={1.5} />
-            Back to Queue
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground">
+            <ArrowLeft size={18} strokeWidth={1.5} />
           </Button>
         </Link>
       }
@@ -183,6 +183,9 @@ export default function CaseDetailPage() {
               </CardContent>
             </Card>
           )}
+
+          {/* Audit Trail */}
+          <AuditTrailViewer caseId={caseData.id} />
         </div>
 
         {/* Right column */}
