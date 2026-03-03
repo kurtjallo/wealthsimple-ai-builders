@@ -52,12 +52,25 @@ export async function POST(
     // Run the full pipeline (waits for completion in demo mode)
     const pipelineState = await processCaseLifecycle(caseId);
 
+    // Surface pipeline errors at the top level for the UI
+    const pipelineErrors = pipelineState.errors.map((err) => ({
+      title: `${err.agent_type} failed`,
+      description: err.error_message,
+      severity: err.recoverable ? ('warning' as const) : ('error' as const),
+      agent_name: err.agent_type,
+      can_retry: err.recoverable,
+      suggested_action: err.recoverable
+        ? 'Retry processing. The issue may be transient.'
+        : 'Review the error details. Manual intervention may be required.',
+    }));
+
     return NextResponse.json({
       success: pipelineState.stage === 'completed',
       pipeline_state: pipelineState,
+      errors: pipelineErrors,
       message: pipelineState.stage === 'completed'
         ? 'Case processed successfully. Ready for officer review.'
-        : `Processing completed with status: ${pipelineState.stage}`,
+        : `Processing completed with status: ${pipelineState.stage}. ${pipelineErrors.length} error(s).`,
     });
 
   } catch (error) {

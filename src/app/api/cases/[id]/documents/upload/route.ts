@@ -71,8 +71,6 @@ export async function POST(
         file_name: file.name,
         file_url: path,
         file_path: path,
-        file_size: file.size,
-        mime_type: file.type,
         processing_status: 'pending',
       })
       .select()

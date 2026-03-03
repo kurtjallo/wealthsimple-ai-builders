@@ -133,9 +133,27 @@ export default function NewCasePage() {
       if (result.success) {
         setStep('complete');
       } else {
-        if (result.errors) {
-          setErrors(result.errors);
-        }
+        // Check top-level errors first, then fall back to pipeline_state.errors
+        const errorList = result.errors?.length > 0
+          ? result.errors
+          : result.pipeline_state?.errors?.length > 0
+            ? result.pipeline_state.errors.map((err: { agent_type?: string; error_message?: string; recoverable?: boolean }) => ({
+                title: `${err.agent_type || 'Pipeline'} failed`,
+                description: err.error_message || 'Unknown error',
+                severity: err.recoverable ? 'warning' : 'error',
+                agent_name: err.agent_type || 'Pipeline',
+                can_retry: err.recoverable ?? true,
+                suggested_action: 'Retry processing or review the error details.',
+              }))
+            : [{
+                title: 'Processing Failed',
+                description: result.message || result.error || 'An unknown error occurred during processing.',
+                severity: 'error',
+                agent_name: 'Pipeline',
+                can_retry: true,
+                suggested_action: 'Retry processing. If the issue persists, escalate for technical review.',
+              }];
+        setErrors(errorList);
         setStep('error');
       }
     } catch {
@@ -173,9 +191,26 @@ export default function NewCasePage() {
       if (result.success) {
         setStep('complete');
       } else {
-        if (result.errors) {
-          setErrors(result.errors);
-        }
+        const errorList = result.errors?.length > 0
+          ? result.errors
+          : result.pipeline_state?.errors?.length > 0
+            ? result.pipeline_state.errors.map((err: { agent_type?: string; error_message?: string; recoverable?: boolean }) => ({
+                title: `${err.agent_type || 'Pipeline'} failed`,
+                description: err.error_message || 'Unknown error',
+                severity: err.recoverable ? 'warning' : 'error',
+                agent_name: err.agent_type || 'Pipeline',
+                can_retry: err.recoverable ?? true,
+                suggested_action: 'Retry processing or review the error details.',
+              }))
+            : [{
+                title: 'Processing Failed',
+                description: result.message || result.error || 'An unknown error occurred during retry.',
+                severity: 'error',
+                agent_name: 'Pipeline',
+                can_retry: true,
+                suggested_action: 'Retry processing. If the issue persists, escalate for technical review.',
+              }];
+        setErrors(errorList);
         setStep('error');
       }
     } catch {
