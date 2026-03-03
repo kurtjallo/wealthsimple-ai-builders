@@ -70,34 +70,36 @@ export function AgentResultsPanel({ agentRuns }: AgentResultsPanelProps) {
               {/* Agent header */}
               <button
                 onClick={() => toggleAgent(run.id)}
-                className="flex w-full items-center gap-3 px-6 py-3 text-left hover:bg-muted/50 transition-colors"
+                className="flex w-full items-start gap-3 px-6 py-4 text-left hover:bg-muted/50 transition-colors"
               >
-                <span className="text-muted-foreground flex-shrink-0">
+                <span className="text-muted-foreground mt-0.5 flex-shrink-0">
                   {isExpanded ? (
                     <ChevronDown size={16} strokeWidth={1.5} />
                   ) : (
                     <ChevronRight size={16} strokeWidth={1.5} />
                   )}
                 </span>
-                <span className="flex-shrink-0">
+                <span className="mt-0.5 flex-shrink-0">
                   <Icon size={16} strokeWidth={1.5} />
                 </span>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm font-medium truncate">
                       {agentConfig?.label || run.agent_type}
                     </span>
-                    <AgentStatusBadge status={run.status} />
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <AgentStatusBadge status={run.status} />
+                      {run.confidence !== null && (
+                        <span className="text-xs tabular-nums text-muted-foreground">
+                          {Math.round(run.confidence * 100)}%
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-muted-foreground mt-0.5">
                     {agentConfig?.description || ''}
                   </p>
                 </div>
-                {run.confidence !== null && (
-                  <span className="text-xs text-muted-foreground flex-shrink-0">
-                    {Math.round(run.confidence * 100)}% confidence
-                  </span>
-                )}
               </button>
 
               {/* Expanded detail */}

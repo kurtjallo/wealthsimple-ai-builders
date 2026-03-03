@@ -34,7 +34,8 @@ const DECISION_OPTIONS: Array<{
   label: string;
   description: string;
   icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>;
-  buttonVariant: 'default' | 'destructive' | 'outline';
+  cardClass: string;
+  iconClass: string;
   confirmClass: string;
   dialogTitle: string;
   dialogDescription: string;
@@ -42,9 +43,10 @@ const DECISION_OPTIONS: Array<{
   {
     value: 'approved',
     label: 'Approve',
-    description: 'Clear the applicant — all checks passed',
+    description: 'All checks passed',
     icon: CheckCircle2,
-    buttonVariant: 'default',
+    cardClass: 'border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-400',
+    iconClass: 'text-emerald-600',
     confirmClass: 'bg-emerald-600 hover:bg-emerald-700 text-white',
     dialogTitle: 'Approve This Case',
     dialogDescription: 'You are approving this KYC application. The applicant will be cleared for account opening. This decision is final and will be recorded in the audit trail.',
@@ -52,9 +54,10 @@ const DECISION_OPTIONS: Array<{
   {
     value: 'denied',
     label: 'Deny',
-    description: 'Reject the application — significant concerns identified',
+    description: 'Significant concerns found',
     icon: XCircle,
-    buttonVariant: 'destructive',
+    cardClass: 'border-red-200 text-red-700 hover:bg-red-50 hover:border-red-400',
+    iconClass: 'text-red-600',
     confirmClass: 'bg-red-600 hover:bg-red-700 text-white',
     dialogTitle: 'Deny This Case',
     dialogDescription: 'You are denying this KYC application. The applicant will not be cleared for account opening. This decision is final and will be recorded in the audit trail.',
@@ -62,9 +65,10 @@ const DECISION_OPTIONS: Array<{
   {
     value: 'escalated',
     label: 'Escalate',
-    description: 'Refer to senior compliance — further review needed',
+    description: 'Needs senior review',
     icon: AlertTriangle,
-    buttonVariant: 'outline',
+    cardClass: 'border-amber-200 text-amber-700 hover:bg-amber-50 hover:border-amber-400',
+    iconClass: 'text-amber-600',
     confirmClass: 'bg-purple-600 hover:bg-purple-700 text-white',
     dialogTitle: 'Escalate This Case',
     dialogDescription: 'You are escalating this case to senior compliance for further review. Please provide context explaining why escalation is needed.',
@@ -150,22 +154,21 @@ export function DecisionWorkflow({ caseId, onDecisionMade }: DecisionWorkflowPro
             {DECISION_OPTIONS.map((option) => {
               const Icon = option.icon;
               return (
-                <Button
+                <button
                   key={option.value}
-                  variant={option.buttonVariant}
+                  type="button"
                   className={cn(
-                    'h-auto flex-col gap-2 py-4',
-                    option.value === 'approved' && 'border-emerald-200 hover:bg-emerald-50 hover:text-emerald-600',
-                    option.value === 'escalated' && 'border-purple-200 hover:bg-purple-50 hover:text-purple-600',
+                    'flex flex-col items-center gap-1.5 rounded-lg border-2 px-4 py-4 text-center transition-colors',
+                    option.cardClass,
                   )}
                   onClick={() => handleSelectDecision(option.value)}
                 >
-                  <Icon size={20} strokeWidth={1.5} />
-                  <span className="font-medium">{option.label}</span>
-                  <span className="text-xs font-normal opacity-70 text-center">
+                  <Icon size={20} strokeWidth={1.5} className={option.iconClass} />
+                  <span className="text-sm font-semibold">{option.label}</span>
+                  <span className="text-xs text-muted-foreground leading-snug">
                     {option.description}
                   </span>
-                </Button>
+                </button>
               );
             })}
           </div>

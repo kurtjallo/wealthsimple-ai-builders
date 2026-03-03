@@ -433,7 +433,7 @@ export const demoAuditLogs: AuditLogInsert[] = [
       event_type: 'agent_action',
       agent_type: 'document_processor',
       input_summary: '1 document submitted for OCR processing',
-      output_summary: 'Extracted 5 fields. Low quality (0.62) — image at angle with glare.',
+      output_summary: 'Extracted 5 fields. Low quality (0.62), image at angle with glare.',
       confidence: 0.62,
       duration_ms: 5870,
       success: true,
