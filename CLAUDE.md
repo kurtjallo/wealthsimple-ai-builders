@@ -68,7 +68,7 @@ When entering plan mode, follow this protocol:
 
 ## Project State
 
-- **Status**: Phase 9 complete — Regulatory audit trail, HITL enforcement, FINTRAC compliance UI all done. Ready for Phase 10.
+- **Status**: Phase 10 complete — QA walkthrough done, bugs fixed, committed and pushed. Ready for submission.
 - **Planning docs**:
   - `.planning/PROJECT.md` — full project context and requirements
   - `.planning/REQUIREMENTS.md` — 26 v1 requirements with traceability
@@ -315,6 +315,21 @@ When entering plan mode, follow this protocol:
 - `src/components/audit/compliance-badge.tsx` — ComplianceBadge (3 variants), RecordRetentionNotice, HumanOnlyIndicator
 - `src/components/audit/str-workflow-panel.tsx` — STR filing workflow with FINTRAC context, suspicious indicators, officer validation
 - `src/components/audit/decision-panel.tsx` — Approve/Deny/Escalate with HITL enforcement, AI recommendation marked "Advisory Only"
+
+### Phase 10: QA & Final Polish
+
+**QA Walkthrough Fixes**
+- Added `AuditTrailViewer` to case detail page (was missing — 15+ QA items depended on it)
+- Fixed `DecisionWorkflow` to use `/api/cases/{id}/decide` (HITL-enforced endpoint) with `officer_id`
+- Added "Advisory Only" label to AI recommendations in `CaseNarrativeCard`
+- Fixed sidebar active state over-matching for Dashboard overview link
+- Populated dashboard overview stats from API (was showing "--" placeholders)
+- Fixed broken nav anchor links (`#solutions`, `#company`, `#pricing` → real section IDs)
+- Fixed `stepNumber` bug in new case wizard (error state showed step 0)
+- Populated error state in new case wizard when processing fails
+- Added `backAction` prop to `DashboardShell` for case detail back navigation
+- Cleaned demo data: removed unused `routing_decision`, `routing_reasons`, `file_size`, `mime_type`
+- Fixed explanation doc: "in parallel" → "orchestrated pipeline", "4-5 days" → "5 days"
 
 ## Phase Plans Summary
 
