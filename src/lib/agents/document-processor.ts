@@ -219,3 +219,92 @@ export async function processAllCaseDocuments(
 
   return results;
 }
+
+// ---- Orchestrator-Compatible Handler ----
+// The orchestrator uses a different type system (from @/types/agents.ts)
+// than this agent's internal types. This adapter bridges them.
+
+import type { GoogleGenerativeAI } from '@google/generative-ai';
+import type {
+  AgentConfig,
+  DocumentProcessorInput as OrchestratorDocInput,
+  DocumentProcessorOutput as OrchestratorDocOutput,
+  ExtractedField as OrchestratorExtractedField,
+} from '@/types';
+import { registerAgent } from './orchestrator';
+
+/**
+ * Convert the per-document ExtractedDocumentData into the flat ExtractedField[]
+ * format the orchestrator pipeline expects for downstream agents.
+ */
+function flattenExtractedFields(
+  docId: string,
+  extracted: ExtractedDocumentData,
+): OrchestratorExtractedField[] {
+  const fields: OrchestratorExtractedField[] = [];
+  const data = extracted.data as unknown as Record<string, { value: unknown; confidence: number; source?: string }>;
+
+  for (const [fieldName, field] of Object.entries(data)) {
+    if (field && typeof field === 'object' && 'value' in field) {
+      fields.push({
+        field_name: fieldName,
+        value: String(field.value),
+        confidence: field.confidence ?? 0,
+        source_document_id: docId,
+      });
+    }
+  }
+
+  return fields;
+}
+
+/**
+ * Orchestrator-compatible document processor handler.
+ *
+ * Adapts the batch DocumentProcessorInput (from @/types/agents.ts) to the
+ * per-document processing pattern, then aggregates results into a single
+ * DocumentProcessorOutput for downstream agents.
+ */
+export async function documentProcessorHandler(
+  input: OrchestratorDocInput,
+  _client: GoogleGenerativeAI,
+  _config: AgentConfig,
+): Promise<OrchestratorDocOutput> {
+  const allExtractedFields: OrchestratorExtractedField[] = [];
+  const rawOcrText: Record<string, string> = {};
+  const documentQuality: Record<string, number> = {};
+
+  for (const doc of input.documents) {
+    // Use file_path (generates signed URL for Mistral OCR) rather than
+    // file_url directly, since the DB stores Supabase storage paths not URLs.
+    const result = await documentProcessorAgent.run({
+      case_id: input.case_id,
+      document_id: doc.id,
+      document_type: doc.type,
+      file_path: doc.file_url || undefined,
+    });
+
+    if (result.success && result.data) {
+      const extracted = result.data.extracted;
+      const fields = flattenExtractedFields(doc.id, extracted);
+      allExtractedFields.push(...fields);
+      rawOcrText[doc.id] = `[OCR text: ${result.data.ocr_text_length} chars]`;
+      documentQuality[doc.id] = result.data.overall_confidence;
+    } else {
+      // Even on failure, record the document with zero quality
+      rawOcrText[doc.id] = '';
+      documentQuality[doc.id] = 0;
+    }
+  }
+
+  return {
+    extracted_fields: allExtractedFields,
+    raw_ocr_text: rawOcrText,
+    document_quality: documentQuality,
+  };
+}
+
+/** Register the Document Processor agent with the orchestrator. */
+export function registerDocumentProcessor(): void {
+  registerAgent('document_processor', documentProcessorHandler);
+}

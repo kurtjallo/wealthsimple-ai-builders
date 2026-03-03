@@ -301,3 +301,11 @@ function resolveApplicantName(input: SanctionsScreenerInput): string {
 
   return input.applicant_name;
 }
+
+// ---- Registration ----
+import { registerAgent } from './orchestrator';
+
+/** Register the Sanctions Screener agent with the orchestrator. */
+export function registerSanctionsScreener(): void {
+  registerAgent('sanctions_screener', sanctionsScreenerHandler);
+}

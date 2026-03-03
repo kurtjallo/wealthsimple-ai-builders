@@ -275,6 +275,8 @@ function verifyDocumentValidity(
  *
  * Returns IdentityVerifierOutput with per-check details and overall assessment.
  */
+import { registerAgent } from './orchestrator';
+
 export async function identityVerifierHandler(
   input: IdentityVerifierInput,
   _client: GoogleGenerativeAI,
@@ -406,4 +408,9 @@ export async function identityVerifierHandler(
     discrepancies,
     verification_summary: summaryParts.join(' '),
   };
+}
+
+/** Register the Identity Verifier agent with the orchestrator. */
+export function registerIdentityVerifier(): void {
+  registerAgent('identity_verifier', identityVerifierHandler);
 }

@@ -183,8 +183,6 @@ export async function processCaseLifecycle(caseId: string): Promise<PipelineStat
           risk_score: riskData?.risk_score ?? null,
           risk_level: riskData?.risk_level ?? null,
           narrative: narrativeData?.narrative ?? null,
-          routing_decision: routing.recommended_action,
-          routing_reasons: routing.routing_reasons,
           updated_at: new Date().toISOString(),
         })
         .eq('id', caseId);
@@ -215,8 +213,6 @@ export async function processCaseLifecycle(caseId: string): Promise<PipelineStat
         .from('cases')
         .update({
           status: 'review', // Even on failure, route to review so officer sees the errors
-          routing_decision: routing.recommended_action,
-          routing_reasons: routing.routing_reasons,
           updated_at: new Date().toISOString(),
         })
         .eq('id', caseId);

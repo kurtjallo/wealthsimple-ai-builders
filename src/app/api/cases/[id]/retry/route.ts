@@ -54,12 +54,25 @@ export async function POST(
     // Re-run the pipeline
     const pipelineState = await processCaseLifecycle(caseId);
 
+    // Surface pipeline errors at the top level for the UI
+    const pipelineErrors = pipelineState.errors.map((err) => ({
+      title: `${err.agent_type} failed`,
+      description: err.error_message,
+      severity: err.recoverable ? ('warning' as const) : ('error' as const),
+      agent_name: err.agent_type,
+      can_retry: err.recoverable,
+      suggested_action: err.recoverable
+        ? 'Retry processing. The issue may be transient.'
+        : 'Review the error details. Manual intervention may be required.',
+    }));
+
     return NextResponse.json({
       success: pipelineState.stage === 'completed',
       pipeline_state: pipelineState,
+      errors: pipelineErrors,
       message: pipelineState.stage === 'completed'
         ? 'Retry successful. Case reprocessed and ready for review.'
-        : `Retry completed with status: ${pipelineState.stage}`,
+        : `Retry completed with status: ${pipelineState.stage}. ${pipelineErrors.length} error(s).`,
     });
   } catch (error) {
     return NextResponse.json(
