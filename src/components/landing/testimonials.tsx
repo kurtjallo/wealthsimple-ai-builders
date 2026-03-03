@@ -12,7 +12,7 @@ const testimonials = [
   },
   {
     quote:
-      "The parallel agent architecture is brilliant. Identity verification and sanctions screening happening simultaneously means we're not just faster — we're more thorough.",
+      "The parallel agent architecture is brilliant. Identity verification and sanctions screening running simultaneously means we're not just faster, we're more thorough.",
     name: "Marcus Thompson",
     title: "Chief Risk Officer",
     company: "Meridian Financial",

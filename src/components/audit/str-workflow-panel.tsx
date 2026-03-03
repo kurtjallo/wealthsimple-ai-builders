@@ -153,7 +153,7 @@ export function STRWorkflowPanel({
             <p className="text-muted-foreground italic">{fintracContext.human_only_rationale}</p>
             <div className="flex items-center gap-1 text-amber-700">
               <ExternalLink className="h-3 w-3" />
-              <span>{fintracContext.regulation} — {fintracContext.requirement}</span>
+              <span>{fintracContext.regulation}: {fintracContext.requirement}</span>
             </div>
           </div>
         )}
